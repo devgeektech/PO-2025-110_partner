@@ -10,15 +10,25 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Dropdown } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
+import { useLocation } from 'react-router-dom';
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
+  const partnerId = queryParams.get("partnerId")
   const fetchServices = async () => {
     try {
-      const result = await getCategories("6809e4acb530a9803ca16bd6");
-      if(result.data.data) {
-        setCategories(result.data.data)
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      if(partnerId){
+      const result = await getCategories(partnerId);
+        if(result.data.data) {
+          setCategories(result.data.data)
+        }
       }
     } catch (error) {
       if (error instanceof AxiosError) {

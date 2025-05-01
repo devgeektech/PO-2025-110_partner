@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import './style.scss';
 import { FaAngleLeft } from "react-icons/fa";
 import {FaLocationArrow } from 'react-icons/fa';
@@ -9,6 +9,9 @@ import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import html2pdf from "html2pdf.js";
 const Orders = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
   const invoiceRef = useRef();
   const [tab, setTab] = useState('active')
   const formatDate = (isoDate: any) => {
@@ -27,6 +30,9 @@ const Orders = () => {
 
   const fetchOrders = async () => {
     try {
+      if (token) {
+        localStorage.setItem('token', token);
+      }
       const result = await getOrders(tab);
       if(result.data.data) {
         setOrders(result.data.data)

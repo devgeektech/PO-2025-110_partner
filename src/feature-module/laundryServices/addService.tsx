@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -8,10 +8,13 @@ import { toast } from "react-toastify";
 import { FaAngleLeft } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
 import { addCategory } from "../../services/categories";
+import { useLocation } from "react-router-dom";
 export default function AddServicesTabContent() {
   const [status, setStatus] = useState("active");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
   const radios = [
     { name: "Active", value: "active" },
     { name: "Inactive", value: "inactive" },
@@ -75,6 +78,12 @@ export default function AddServicesTabContent() {
       formik.setFieldValue("image", file);
     }
   };
+
+  useEffect(()=>{
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+  }, [])
 
   return (
     <div className="accountSettingTab">

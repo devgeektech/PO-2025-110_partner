@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import './style.scss';
 import { FaAngleLeft } from "react-icons/fa";
 import { getOrderById, updateOrderById } from '../../services/orders';
@@ -9,7 +9,9 @@ import { Form } from 'react-bootstrap';
 const OrderDetails = () => {
   const { id } = useParams();
   const [status, setStatus] = useState('Order placed');
-
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
   const handleStatusChange = async (event:any) => {
     setStatus(event.target.value);
 
@@ -54,6 +56,9 @@ const OrderDetails = () => {
 
   const fetchOrderDetails = async () => {
     try {
+      if (token) {
+        localStorage.setItem('token', token);
+      }
       const result = await getOrderById(id);
       console.log("fetch wokring ",result.data.data.status)
       if(result.data.data) {

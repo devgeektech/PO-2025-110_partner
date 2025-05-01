@@ -1,11 +1,14 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import './style.scss';
 import { FaAngleLeft } from "react-icons/fa";
 import {FaLocationArrow } from 'react-icons/fa';
 import {MdOutlineFileDownload } from 'react-icons/md';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 const Invoice = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get("token");
   const orders = [
     {
       date: '23 March 2025',
@@ -18,6 +21,12 @@ const Invoice = () => {
       status: 'On the Way'
     }
   ]
+
+  useEffect(()=>{
+    if (token) {
+      localStorage.setItem('token', token);
+    }
+  }, [])
 
   return (
     <div className="content">
