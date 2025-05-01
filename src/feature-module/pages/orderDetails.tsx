@@ -1,0 +1,158 @@
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import './style.scss';
+import { FaAngleLeft } from "react-icons/fa";
+import { getOrderById, updateOrderById } from '../../services/orders';
+import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
+import { Form } from 'react-bootstrap';
+const OrderDetails = () => {
+  const { id } = useParams();
+  const [status, setStatus] = useState('Order placed');
+
+  const handleStatusChange = async (event:any) => {
+    setStatus(event.target.value);
+
+    if(id){
+      try {
+        const result = await updateOrderById(id, {status : event.target.value});
+        if(result.data) {
+          toast.success(result.data.responseMessage)
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data?.responseMessage);
+        }
+      }
+    }
+
+  };
+  const formatDate = (isoDate: any) => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+  
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+  
+    return `${day} ${month} ${year}`;
+  };
+
+  const [order, setOrder] = useState<any>({
+    date: '23 March 2025',
+    time: '10:00 AM',
+    orderId: '105',
+    title: 'Wash & Fold',
+    address: 'Cagayan Valley Road, Bonga Plaridel Philippines',
+    amount: '₱ 100.00',
+    payment: 'Paid with Wallet',
+    status: 'On the Way'
+  })
+
+  const fetchOrderDetails = async () => {
+    try {
+      const result = await getOrderById(id);
+      console.log("fetch wokring ",result.data.data.status)
+      if(result.data.data) {
+        setOrder(result.data.data)
+        setStatus(result.data.data.status)
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.responseMessage);
+      }
+    }
+  };
+
+  useEffect(()=> {
+    fetchOrderDetails()
+  },[])
+
+
+  return (
+    <div className="content">
+      <div className="container mt-4">
+      <div className="left-icon">
+           <FaAngleLeft/>
+      
+        <h3 className="text-center mb-4 main-text">Orders Details</h3>
+        </div>
+        {/* Tabs */}
+        {/* <div className="d-flex justify-content-center mb-3 active-history-button">
+          <button className="btn btn-primary me-2 active-button">Active</button>
+          <button className="btn btn-outline-primary history-button">History</button>
+        </div> */}
+
+        {/* Orders List */}
+          <div className="card mb-3 shadow-sm border-0 order-mob">
+            <div className="card-header d-flex justify-content-between align-items-center bg-light">
+              <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
+              <span className="text-muted small">{order?.deliveryTime}</span>
+            </div>
+            <div className="card-body card-body-2 order-details-card-body">
+            <div className="card-body-inner-top">
+                <h5 className="card-title mb-2">{order?.category?.name}</h5>
+                <p className="card-text text-muted small mb-1">Order ID: {order.orderId}</p>
+               </div>
+              <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>
+              <p className="card-text card-text-3 fw-bold mb-2">{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
+              <div className="delivery-download-button">
+               <span className="delivery-button-2 badge bg-primary"><img src="/assets/img/delivery-icon-white.png" alt=""/> {order.status}</span>
+              </div>
+            </div>
+
+            <div className="card-body-2">
+            <div className="card-body-inner-top">
+                <h5 className="card-title mb-2">{order.title}</h5>
+                
+               </div>
+               <div className="delivery-download-button delivery-download-button-2">
+               <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status}>
+                  <option>Select menu</option>
+                  <option value="Order placed">Order placed</option>
+                  <option value="On the way">On the way</option>
+                  <option value="In process">In process</option>
+                  <option value="Laundry is cleaned">Laundry is cleaned</option>
+                  <option value="Completed">Completed</option>
+               </Form.Select>
+               <span className="Order-id-98"> Order ID: {order.orderId}</span>
+               </div>
+              {/* <div className="delivery-download-button delivery-download-button-2">
+                 <span className="download-button bg-primary"> {order.status} <MdOutlineKeyboardArrowDown /></span>
+                 
+              </div> */}
+            </div>
+
+            <div className="order-no-110">
+             <p className="card-text">Order no:{order.orderId}</p>
+            </div>
+
+            <div className="per-kilogram-area">
+            <div className="per-kilogram-inner-top">
+               <div className="per-kilogram-inner">
+               <div className="weightmachine">
+                <p className="card-text weightmachine-image"><img src="/assets/img/weight-machine.png" alt=""/></p>
+                </div>
+                <div className="weightmachine">
+                 <p className="card-text weightmachine-text-1">Per Kilogram</p>
+                 <p className="card-text weightmachine-text-2">Perfect for mixed loads. Pay based on total laundry Weight.</p>
+                 </div>
+                   </div>
+
+                 <div className="weightmachine-input-fiels">
+                        <input type="text" className="input-kg" placeholder="6 Kg" readOnly={true} value={order.weight} />
+                    </div>
+                 </div>
+                 
+            </div>
+
+         </div>
+      </div>
+    </div>
+  )
+}
+
+export default OrderDetails

@@ -1,0 +1,140 @@
+.categories-screen {
+    padding: 16px;
+    position: relative;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+  
+    .screen-title {
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+  
+    .category-card {
+      border-radius: 12px;
+      background: white;
+      border: none;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  
+      .category-icon {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+    }
+  
+    .fab-button {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  
+      svg {
+        color: white;
+      }
+    }
+  }
+
+  .service-heading {
+
+    svg {
+        width: 3%;
+        fill: #000;
+    }
+    
+    h3 {
+        width: 95%;
+        display: inline-block !important;
+        color: #030303;
+    }
+}
+  form{
+    .uploadBox {
+        border: 1px dashed #4facfe !important;
+
+        .uploadLabel {
+            color: #4facfe !important;
+            padding-left: 20px;
+        }
+        svg{
+            fill: #00f2fe;
+        }
+    }
+    .gradientButton{
+        background: linear-gradient(0deg, #4CDEDE 0%, #7B80F6 100%);    
+        border: none;
+    }
+    .btn-group{
+        background-color: transparent;
+        border: none;
+    }
+
+
+    .form-check{
+        background-color: #efeff4;
+        padding: 12px 20px;
+        border-radius: 10px;
+
+        input, input:checked {
+            border-color: #00f2fe !important;
+            accent-color: red !important;
+        }
+        input:checked::after{
+            background-color: #00f2fe !important;
+        }
+        // input:checked{
+        //     border-color: #00f2fe !important;
+        // }
+    }
+    
+  }
+  
+  form label, form input {
+    color: #000000 !important;        
+  }
+
+  .categories-screen{
+    .cat-title {
+        display: flex;
+        justify-content: space-between;
+        h4{
+            color: #030303;
+        }
+        svg{
+            fill: #000;
+        }
+    }
+    
+  .category-card{
+    background-color: #efeff4;
+    border: 1px solid #1f1f1f14;
+    border-radius: 10px;
+
+    h6{
+        color: #1C1C28;
+        font-size: 16px;
+        font-weight: 600 !important;
+    }
+    p{
+        color: #1C1C28 !important;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    button::after {
+      display: none;
+    }
+    
+  }
+}
+.personalIformation {
+  max-width: 700px;
+  margin: auto;
+}
+
+  

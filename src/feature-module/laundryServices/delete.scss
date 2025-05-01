@@ -1,0 +1,27 @@
+.delete-icon-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .delete-icon-circle {
+    background: #ff0000;
+    padding: 15px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .deleteModal {
+    button.btn.btn-primary {
+        background: #69B6F0;
+        border-color: #69B6F0;
+        border-radius: 8px;
+    }
+  }
+  @media only screen and (max-width: 574px) {
+    .deleteModal .modal-dialog.modal-dialog-centered {
+        max-width: 290px;
+        margin: auto;
+    }  
+ }
+  
