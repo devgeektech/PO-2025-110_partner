@@ -11,7 +11,7 @@ export const addCategory = async (payload: any) => {
 }
 
 export const getCategories = async (id: any) => {
-    return http.get(`/category/${id}`, {
+    return http.get(`/partner/category/${id}`, {
         headers: {
             Authorization: `${token}`
         }
