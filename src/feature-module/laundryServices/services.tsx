@@ -22,9 +22,11 @@ export default function CategoriesList() {
   const fetchServices = async () => {
     try {
       if (token) {
+        console.log(token,'>>> token')
         localStorage.setItem('token', token);
       }
       if(partnerId){
+        console.log(partnerId,">>> partner Id")
       const result = await getCategories(partnerId);
         if(result.data.data) {
           setCategories(result.data.data)
