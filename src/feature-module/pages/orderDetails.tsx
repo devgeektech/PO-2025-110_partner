@@ -23,7 +23,8 @@ const OrderDetails = () => {
         }
       } catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(error.response?.data?.responseMessage);
+          let message = error.response?.data?.responseMessage || error.response?.data?.message || "Something Went Wrong" 
+          toast.error(message);
         }
       }
     }

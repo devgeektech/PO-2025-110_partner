@@ -21,6 +21,7 @@ export default function CategoriesList() {
   const partnerId = queryParams.get("partnerId")
   const fetchServices = async () => {
     try {
+      console.log(token,"token", partnerId,"partnerId")
       if (token) {
         console.log(token,'>>> token')
         localStorage.setItem('token', token);

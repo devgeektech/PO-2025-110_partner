@@ -7,7 +7,7 @@ http.defaults.headers['Authorization'] = token;
 http.interceptors.response.use(
     response => response,
     error => {
-        if (error.response.status === 401 || error.response.status === 403) {
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
             localStorage.clear();
             window.location.href = '/';
         }

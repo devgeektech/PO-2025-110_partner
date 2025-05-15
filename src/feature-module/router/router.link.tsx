@@ -14,11 +14,11 @@ import Invoice from "../pages/invoice";
 const routes = all_routes;
 
 const publicRoutes = [
-  {
-    path: routes.faq,
-    element: <Faq />,
-    route: Route,
-  },
+  // {
+  //   path: routes.faq,
+  //   element: <Faq />,
+  //   route: Route,
+  // },
   {
     path: routes.orders,
     element:  <Orders />,
