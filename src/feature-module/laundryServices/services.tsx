@@ -1,36 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button } from 'react-bootstrap';
-import { Plus } from 'react-bootstrap-icons'; // or use custom icon if needed
-import test from "./../../icons/ArrowBottomIcon"
-import './CategoriesList.scss';
+import { Card, Button, Dropdown } from 'react-bootstrap';
+import { Plus } from 'react-bootstrap-icons';
 import { FaAngleLeft, FaSearch } from 'react-icons/fa';
 import { deleteCategory, getCategories } from '../../services/categories';
 import DeleteCategoryModal from './deleteService';
-import { BsThreeDotsVertical } from 'react-icons/bs'; 
-import { Dropdown } from 'react-bootstrap';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { useLocation } from 'react-router-dom';
+
 export default function CategoriesList() {
-  const [categories, setCategories] = useState<any>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [showSearchInput, setShowSearchInput] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
-  const partnerId = queryParams.get("partnerId")
+  const partnerId = queryParams.get("partnerId");
+
   const fetchServices = async () => {
     try {
-      console.log(token,"token", partnerId,"partnerId")
       if (token) {
-        console.log(token,'>>> token')
         localStorage.setItem('token', token);
       }
-      if(partnerId){
-        console.log(partnerId,">>> partner Id")
-      const result = await getCategories(partnerId);
-        if(result.data.data) {
-          setCategories(result.data.data)
+      
+      if (partnerId) {
+        const result = await getCategories(partnerId,searchTerm);
+        if (result.data.data) {
+          setCategories(result.data.data);
         }
       }
     } catch (error) {
@@ -45,13 +44,13 @@ export default function CategoriesList() {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = async() => {
+  const handleConfirmDelete = async () => {
     if (selectedCategory && selectedCategory._id) {
       try {
-        const result:any = await deleteCategory(selectedCategory._id);
-        console.log(result.data.responseMessage,">>> result >>>")
-        if(result.data.responseMessage){
-          toast.success(result.data.responseMessage)
+        const result: any = await deleteCategory(selectedCategory._id);
+        if (result.data.responseMessage) {
+          toast.success(result.data.responseMessage);
+          fetchServices();
         }
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -67,35 +66,88 @@ export default function CategoriesList() {
     setShowDeleteModal(false);
   };
 
+  const handleSearch = (value:any)=>{
+    setSearchTerm(value);
+  }
+
+
+  useEffect(() => {
+      fetchServices()
+  }, [searchTerm]);
+
   useEffect(() => {
     fetchServices();
-  },[])
-
+  }, []);
+  
   return (
-    <div className="categories-screen">
-      <div className="cat-title mb-2">
-        <FaAngleLeft />
-        <h4 className="mb-3 screen-title">Categories</h4>
-        <FaSearch />
+    <div style={{ padding: '20px' }}>
+      <div
+        style={{
+          position: 'relative',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} />
+
+        <h4 style={{ margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+          Categories
+        </h4>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {showSearchInput && (
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => handleSearch(e.target.value)}
+              style={{
+                height: '30px',
+                padding: '4px 10px',
+                fontSize: '14px',
+                width: '180px',
+                borderRadius: '4px',
+                border: '1px solid #ccc'
+              }}
+            />
+          )}
+          <FaSearch
+            onClick={() => setShowSearchInput(!showSearchInput)}
+            style={{ fontSize: '18px', cursor: 'pointer' }}
+          />
+        </div>
       </div>
-      <div className="categories-list">
+
+      <div>
         {categories.map((cat: any) => (
           <Card
-            key={cat.name}
-            className="category-card mb-3 d-flex flex-row align-items-center p-3"
+            key={cat._id}
+            style={{
+              marginBottom: '15px',
+              padding: '15px',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#f5f5f9'
+            }}
           >
             <img
               src={process.env.REACT_APP_IMAGE_URL + cat.photo}
               alt={cat.name}
-              className="category-icon me-3"
+              style={{
+                width: '50px',
+                height: '50px',
+                objectFit: 'cover',
+                borderRadius: '8px',
+                marginRight: '15px'
+              }}
             />
-            <div className="flex-grow-1">
-              <h6 className="mb-1 fw-bold">{cat.name}</h6>
-              <p className="mb-0 text-muted small">{cat.description}</p>
+            <div style={{ flexGrow: 1 }}>
+              <h6 style={{ marginBottom: '4px', fontWeight: 'bold' }}>{cat.name}</h6>
+              <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>{cat.description}</p>
             </div>
-            {/* <Button variant="link" className="text-muted p-0" onClick={() => handleDeleteClick(cat)}>
-              <i className="bi bi-three-dots-vertical"></i>
-            </Button> */}
             <Dropdown align="end">
               <Dropdown.Toggle
                 as="button"
@@ -114,11 +166,21 @@ export default function CategoriesList() {
         ))}
       </div>
 
-      <Button className="fab-button rounded-circle shadow-lg" variant="primary">
+      <Button
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          borderRadius: '50%',
+          padding: '12px 15px',
+          fontSize: '20px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+        }}
+        variant="primary"
+      >
         <Plus size={24} />
       </Button>
 
-      {/* Delete Category Modal */}
       <DeleteCategoryModal
         show={showDeleteModal}
         onHide={handleCloseModal}

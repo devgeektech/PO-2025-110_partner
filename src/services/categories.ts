@@ -10,8 +10,8 @@ export const addCategory = async (payload: any) => {
       });
 }
 
-export const getCategories = async (id: any) => {
-    return http.get(`/category/partner/${id}`, {
+export const getCategories = async (id: any,search:any) => {
+    return http.get(`/category/partner/${id}?search=${search}`, {
         headers: {
             Authorization: `${token}`
         }

@@ -14,4 +14,8 @@ export const all_routes = {
   login: "/auth/login",
   changePassword: "/auth/change-password",
   forgotPasssword: "/auth/forgot-password",
+  servicesRedirect:"services/redirect",
+  ordersRedirect:"orders/redirect",
+  orderserviceRedirect:"orderservice/redirect",
+  addserviceRedirect:"addservice/redirect"
 };
