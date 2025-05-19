@@ -5,7 +5,6 @@ import * as Yup from "yup";
 import clsx from "clsx";
 import "./CategoriesList.scss";
 import { toast } from "react-toastify";
-import { FaAngleLeft } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
 import { addCategory } from "../../services/categories";
 import { useLocation } from "react-router-dom";

@@ -9,13 +9,15 @@ export const all_routes = {
   invoice: "/pages/invoice",
   addService: "/pages/addService",
   services: "/pages/services",
+  // backRoute: "/pages/redirectBack",
+  addserviceRedirect:"/pages/addService",
   // Auth Routes
   register: "/auth/register",
   login: "/login",
   changePassword: "/auth/change-password",
   forgotPasssword: "/auth/forgot-password",
-  servicesRedirect:"services/redirect",
-  ordersRedirect:"orders/redirect",
+  servicesRedirect:"/services/redirect",
+  invoiceRedirect:"/invoice/redirect",
+  ordersRedirect:"/orders/redirect",
   orderserviceRedirect:"orderservice/redirect",
-  addserviceRedirect:"addservice/redirect"
 };

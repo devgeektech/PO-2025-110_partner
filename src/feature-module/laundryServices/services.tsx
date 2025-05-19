@@ -7,7 +7,8 @@ import DeleteCategoryModal from './deleteService';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { all_routes } from '../router/all_routes';
 
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -19,6 +20,8 @@ export default function CategoriesList() {
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
   const partnerId = queryParams.get("partnerId");
+  const navigate = useNavigate();
+  const route = all_routes;
 
   const fetchServices = async () => {
     try {
@@ -39,9 +42,17 @@ export default function CategoriesList() {
     }
   };
 
+  const handleAddCatgegory = () => {
+    navigate(route.addserviceRedirect+`?token=${token}&partnerId=${partnerId}`)
+  };
+
+  const handleBackRoute = () => {
+    navigate(route.servicesRedirect+`?token=${token}&partnerId=${partnerId}`)
+  };
+
   const handleDeleteClick = (category: any) => {
     setSelectedCategory(category);
-    setShowDeleteModal(true);
+    setShowDeleteModal(true);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
   };
 
   const handleConfirmDelete = async () => {
@@ -90,7 +101,7 @@ export default function CategoriesList() {
           justifyContent: 'space-between'
         }}
       >
-        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} />
+        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={()=>handleBackRoute()}/>
 
         <h4 style={{ margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
           Categories
@@ -178,7 +189,7 @@ export default function CategoriesList() {
         }}
         variant="primary"
       >
-        <Plus size={24} />
+        <Plus size={24} onClick={()=>handleAddCatgegory()}/>
       </Button>
 
       <DeleteCategoryModal

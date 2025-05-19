@@ -11,6 +11,7 @@ import AddServicesTabContent from "../laundryServices/addService";
 import CategoriesList from "../laundryServices/services";
 import OrderDetails from "../pages/orderDetails";
 import Invoice from "../pages/invoice";
+import BackPage from "../common/backPage";
 const routes = all_routes;
 
 const publicRoutes = [
@@ -42,6 +43,21 @@ const publicRoutes = [
   {
     path: routes.services,
     element: <CategoriesList />,
+    route: Route
+  },
+  {
+    path: routes.servicesRedirect,
+    element: <BackPage />,
+    route: Route
+  },
+  {
+    path: routes.invoiceRedirect,
+    element: <BackPage />,
+    route: Route
+  },
+  {
+    path: routes.ordersRedirect,
+    element: <BackPage />,
     route: Route
   }
 ];
