@@ -8,10 +8,10 @@ export const all_routes = {
   orderDetails: "/pages/order/:id",
   invoice: "/pages/invoice",
   addService: "/pages/addService",
-  services: "pages/services",
+  services: "/pages/services",
   // Auth Routes
   register: "/auth/register",
-  login: "/auth/login",
+  login: "/login",
   changePassword: "/auth/change-password",
   forgotPasssword: "/auth/forgot-password",
   servicesRedirect:"services/redirect",
