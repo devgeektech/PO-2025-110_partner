@@ -9,7 +9,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { addCategory } from "../../services/categories";
 import { useLocation } from "react-router-dom";
 export default function AddServicesTabContent() {
-  const [status, setStatus] = useState("active");
+  const [status, setStatus] = useState("Active");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -23,7 +23,7 @@ export default function AddServicesTabContent() {
     serviceName: "",
     description: "",
     image: null,
-    status: "active",
+    status: "Active",
   };
 
   const addServiceSchema = Yup.object().shape({
@@ -37,14 +37,14 @@ export default function AddServicesTabContent() {
     validationSchema: addServiceSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
+        values.status = status;
         const payload: any = {
-          ...values,
-          status,
+          ...values
         };
 
         const formData = new FormData();
 
-        for (const key in payload) {
+        for (const key in values) {
           if (key !== "image") {
             formData.append(key, payload[key]);
           }
@@ -54,15 +54,11 @@ export default function AddServicesTabContent() {
           formData.append("image", payload.image);
         }
 
-        formData.append("status", status);
-
         const result = await addCategory(formData);
-
-        console.log("Submitted Service", result);
         toast.success("Service added successfully");
         resetForm();
         setSelectedImage(null);
-        setStatus("active");
+        setStatus("Active");
       } catch (error:any) {
         console.log(error,'>>> error')
         toast.error(error.response?.data?.responseMessage)
@@ -172,8 +168,8 @@ export default function AddServicesTabContent() {
                 id="status-active"
                 label="Active"
                 name="status"
-                value="active"
-                checked={status === "active"}
+                value="Active"
+                checked={status === "Active"}
                 onChange={(e) => setStatus(e.target.value)}
                 className="flex-fill"
               />
@@ -182,8 +178,8 @@ export default function AddServicesTabContent() {
                 id="status-inactive"
                 label="Inactive"
                 name="status"
-                value="inactive"
-                checked={status === "inactive"}
+                value="InActive"
+                checked={status === "InActive"}
                 onChange={(e) => setStatus(e.target.value)}
                 className="flex-fill"
               />
