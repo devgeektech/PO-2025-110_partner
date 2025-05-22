@@ -12,7 +12,7 @@ jspm_packages/
 
 # Build output
 dist/
-build/
+# build/
 .built/
 .tmp/
 
