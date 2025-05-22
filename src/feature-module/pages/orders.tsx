@@ -48,6 +48,12 @@ const Orders = () => {
     }
   };
 
+  const handleOrderDetail = (id: any) => {
+    const path = route.orderDetails.replace(':id', id);
+    navigate(`${path}?token=${token}&partnerId=${partnerId}`);
+  };
+
+
   const getInvoiceHTML = (order: any) => (
     <div className="content">
       <div className="container mt-4">
@@ -154,7 +160,7 @@ const Orders = () => {
         {/* Orders List */}
         <div className='row'>
           {orders.map((order: any, index: any) => (
-            <div className='col-lg-4 col-md-6'>
+            <div className='col-lg-4 col-md-6' onClick={() => handleOrderDetail(order?._id)}>
               <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
                 <div className="card-header d-flex justify-content-between align-items-center bg-light">
                   <span className="fw-bold">{formatDate(order?.pickupDate)}</span>

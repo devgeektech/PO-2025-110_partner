@@ -100,6 +100,9 @@ export default function AddServicesTabContent() {
                   formik.touched.serviceName && formik.errors.serviceName,
               })}
             />
+               {formik.touched.serviceName && formik.errors.serviceName && (
+              <div className="text-danger mt-1">{formik.errors.serviceName}</div>
+            )}
           </Form.Group>
 
           {/* Upload Image */}
