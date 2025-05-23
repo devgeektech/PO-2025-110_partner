@@ -1,50 +1,67 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import clsx from "clsx";
 import "./CategoriesList.scss";
 import { toast } from "react-toastify";
 import { CiCirclePlus } from "react-icons/ci";
-import { addCategory } from "../../services/categories";
-import { useLocation } from "react-router-dom";
+import { addCategory, getCategoryDetail, updateCategory } from "../../services/categories";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AxiosError } from "axios";
+import { all_routes } from "../router/all_routes";
+
+type CategoryDetailType = {
+  name?: string;
+  description?: string;
+  photo?: string;
+  status?: string;
+};
+
 export default function AddServicesTabContent() {
-  const [status, setStatus] = useState("Active");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const { id } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
-  const radios = [
-    { name: "Active", value: "active" },
-    { name: "Inactive", value: "inactive" },
-  ];
-  
+  const partnerId = queryParams.get("partnerId");
+  const navigate = useNavigate();
+  const route = all_routes;
+
+  const [categoryDetail, setCategoryDetail] = useState<CategoryDetailType | null>(null);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [status, setStatus] = useState("Active");
+
+  const isEditMode = Boolean(id);
+
   const initialValues = {
-    serviceName: "",
-    description: "",
-    image: null,
-    status: "Active",
+    serviceName: categoryDetail?.name || "",
+    description: categoryDetail?.description || "",
+    image: categoryDetail?.photo || "",
+    status: categoryDetail?.status || "Active",
   };
 
   const addServiceSchema = Yup.object().shape({
     serviceName: Yup.string().required("Service name is required"),
     description: Yup.string(),
-    image: Yup.mixed().required("Image is required"),
+    image: Yup.mixed().when([], {
+      is: () => !isEditMode,
+      then: schema => schema.required("Image is required"),
+    }),
   });
 
   const formik = useFormik({
     initialValues,
+    enableReinitialize: true,
     validationSchema: addServiceSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
-        values.status = status;
         const payload: any = {
-          ...values
+          ...values,
+          status,
         };
 
         const formData = new FormData();
-
-        for (const key in values) {
+        for (const key in payload) {
           if (key !== "image") {
             formData.append(key, payload[key]);
           }
@@ -54,14 +71,21 @@ export default function AddServicesTabContent() {
           formData.append("image", payload.image);
         }
 
-        const result = await addCategory(formData);
-        toast.success("Service added successfully");
+        if (id) {
+          const result = await updateCategory(formData, id);
+          navigateToListing(result);
+        } else {
+          const result = await addCategory(formData);
+          navigateToListing(result);
+        }
+
+        toast.success("Service saved successfully");
         resetForm();
         setSelectedImage(null);
         setStatus("Active");
-      } catch (error:any) {
-        console.log(error,'>>> error')
-        toast.error(error.response?.data?.responseMessage)
+      } catch (error: any) {
+        console.log(error, ">>> error");
+        toast.error(error.response?.data?.responseMessage);
       }
     },
   });
@@ -74,18 +98,41 @@ export default function AddServicesTabContent() {
     }
   };
 
-  useEffect(()=>{
-    if (token) {
-      localStorage.setItem('token', token);
+  const navigateToListing = (res: any) => {
+    if (res?.status === 200) {
+      navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
     }
-  }, [])
+  };
+
+  const fetchDetails = async (id: string) => {
+    try {
+      const result = await getCategoryDetail(id);
+      console.log("result.data.data==>", JSON.stringify(result.data.data));
+      if (result.data.data) {
+        setCategoryDetail(result.data.data);
+        setStatus(result.data.data.status || "Active");
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.responseMessage);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchDetails(id);
+    }
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+  }, [id, token]);
 
   return (
     <div className="accountSettingTab">
       <div className="personalIformation bgFormColor p-4 formEditWrap mb-3">
         <div className="service-heading mb-2">
-            
-          <h3 className="mb-3 text-center">Add Service</h3>
+          <h3 className="mb-3 text-center">{isEditMode ? "Edit Service" : "Add Service"}</h3>
         </div>
         <Form onSubmit={formik.handleSubmit}>
           {/* Service Name */}
@@ -100,14 +147,14 @@ export default function AddServicesTabContent() {
                   formik.touched.serviceName && formik.errors.serviceName,
               })}
             />
-               {formik.touched.serviceName && formik.errors.serviceName && (
+            {formik.touched.serviceName && formik.errors.serviceName && (
               <div className="text-danger mt-1">{formik.errors.serviceName}</div>
             )}
           </Form.Group>
 
           {/* Upload Image */}
           <Form.Group className="mb-3">
-            <Form.Label>Add Service Image</Form.Label>
+            <Form.Label>{isEditMode ? "Update Service Image" : "Add Service Image"}</Form.Label>
             <div className="uploadBox text-center p-4 border border-light rounded">
               <Form.Control
                 type="file"
@@ -117,8 +164,10 @@ export default function AddServicesTabContent() {
                 id="upload-image"
               />
               <CiCirclePlus />
+
+              {/* Show file name */}
               <label htmlFor="upload-image" className="uploadLabel blue-label">
-                {selectedImage ? selectedImage.name : "Upload Icon"}
+                {selectedImage?.name || categoryDetail?.photo || "Upload Icon"}
               </label>
             </div>
             {formik.touched.image && formik.errors.image && (
@@ -142,27 +191,6 @@ export default function AddServicesTabContent() {
           </Form.Group>
 
           {/* Status */}
-          {/* <Form.Group className="mb-4">
-            <Form.Label>Status</Form.Label>
-            <div className="d-flex gap-3">
-              <Button
-                type="button"
-                variant={status === 'active' ? 'primary' : 'outline-secondary'}
-                onClick={() => setStatus('active')}
-                className="flex-fill"
-              >
-                Active
-              </Button>
-              <Button
-                type="button"
-                variant={status === 'inactive' ? 'primary' : 'outline-secondary'}
-                onClick={() => setStatus('inactive')}
-                className="flex-fill"
-              >
-                Inactive
-              </Button>
-            </div>
-          </Form.Group> */}
           <Form.Group className="mb-4">
             <Form.Label>Status</Form.Label>
             <div className="d-flex gap-3">
@@ -190,7 +218,7 @@ export default function AddServicesTabContent() {
           </Form.Group>
 
           <Button type="submit" className="w-100 gradientButton">
-            Add Service
+            {isEditMode ? "Update Service" : "Add Service"}
           </Button>
         </Form>
       </div>

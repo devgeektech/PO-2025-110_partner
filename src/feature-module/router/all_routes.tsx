@@ -11,6 +11,7 @@ export const all_routes = {
   services: "/pages/services",
   // backRoute: "/pages/redirectBack",
   addserviceRedirect:"/pages/addService",
+  editserviceRedirect: "/pages/editService/:id",
   // Auth Routes
   register: "/auth/register",
   login: "/login",

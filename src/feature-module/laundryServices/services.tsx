@@ -28,9 +28,9 @@ export default function CategoriesList() {
       if (token) {
         localStorage.setItem('token', token);
       }
-      
+
       if (partnerId) {
-        const result = await getCategories(partnerId,searchTerm);
+        const result = await getCategories(partnerId, searchTerm);
         if (result.data.data) {
           setCategories(result.data.data);
         }
@@ -43,16 +43,22 @@ export default function CategoriesList() {
   };
 
   const handleAddCatgegory = () => {
-    navigate(route.addserviceRedirect+`?token=${token}&partnerId=${partnerId}`)
+    navigate(route.addserviceRedirect + `?token=${token}&partnerId=${partnerId}`)
   };
 
   const handleBackRoute = () => {
-    navigate(route.servicesRedirect+`?token=${token}&partnerId=${partnerId}`)
+    navigate(route.servicesRedirect + `?token=${token}&partnerId=${partnerId}`)
   };
 
   const handleDeleteClick = (category: any) => {
     setSelectedCategory(category);
-    setShowDeleteModal(true);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    setShowDeleteModal(true);
+  };
+
+  const handleEditClick = (category: any) => {
+    setSelectedCategory(category);
+    const path = route.editserviceRedirect.replace(':id', category._id);
+    navigate(`${path}?token=${token}&partnerId=${partnerId}`);
   };
 
   const handleConfirmDelete = async () => {
@@ -77,19 +83,19 @@ export default function CategoriesList() {
     setShowDeleteModal(false);
   };
 
-  const handleSearch = (value:any)=>{
+  const handleSearch = (value: any) => {
     setSearchTerm(value);
   }
 
 
   useEffect(() => {
-      fetchServices()
+    fetchServices()
   }, [searchTerm]);
 
   useEffect(() => {
     fetchServices();
   }, []);
-  
+
   return (
     <div style={{ padding: '20px' }}>
       <div
@@ -101,7 +107,7 @@ export default function CategoriesList() {
           justifyContent: 'space-between'
         }}
       >
-        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={()=>handleBackRoute()}/>
+        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={() => handleBackRoute()} />
 
         <h4 style={{ margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
           Categories
@@ -168,6 +174,9 @@ export default function CategoriesList() {
                 <BsThreeDotsVertical size={20} />
               </Dropdown.Toggle>
               <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleEditClick(cat)}>
+                  Edit
+                </Dropdown.Item>
                 <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
                   Delete
                 </Dropdown.Item>
@@ -189,7 +198,7 @@ export default function CategoriesList() {
         }}
         variant="primary"
       >
-        <Plus size={24} onClick={()=>handleAddCatgegory()}/>
+        <Plus size={24} onClick={() => handleAddCatgegory()} />
       </Button>
 
       <DeleteCategoryModal

@@ -59,7 +59,12 @@ const publicRoutes = [
     path: routes.ordersRedirect,
     element: <BackPage />,
     route: Route
-  }
+  },
+  {
+    path: routes.editserviceRedirect,
+    element: <AddServicesTabContent />,
+    route: Route
+  },
 ];
 
 const withoutHeaderRoutes = [

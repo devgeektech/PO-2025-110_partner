@@ -28,3 +28,22 @@ export const deleteCategory = async (id: any) => {
         }
     });
 }
+
+export const getCategoryDetail = async (id: any) => {
+    const myToken = getStorageItem("token");
+    return http.get(`/category/detail/${id}`, {
+        headers: {
+            Authorization: `${myToken}`
+        }
+    });
+}
+
+
+export const updateCategory = async (payload: any,id:any) => {
+    const myToken = getStorageItem("token");
+    return http.put(`/category/${id}`, payload, {
+        headers: {
+          Authorization: `${myToken}`,
+        },
+      });
+}
