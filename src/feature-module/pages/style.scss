@@ -321,3 +321,13 @@ span.payment-status-button {
 }
 
 .apple-pay img {margin-right: 10px;}
+
+.card-body-inner-top {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .card-body-inner-top:hover {
+    background-color: rgba(13, 110, 253, 0.1); /* Bootstrap primary with transparency */
+  }
+  

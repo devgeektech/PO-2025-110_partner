@@ -146,7 +146,7 @@ const Orders = () => {
     <div className="content">
       <div className="container mt-4">
         <div className="left-icon">
-          <FaAngleLeft onClick={()=>handleBackRoute()} />
+          <FaAngleLeft onClick={() => handleBackRoute()} />
 
           <h3 className="text-center mb-4 main-text">Orders</h3>
         </div>
@@ -160,14 +160,17 @@ const Orders = () => {
         {/* Orders List */}
         <div className='row'>
           {orders.map((order: any, index: any) => (
-            <div className='col-lg-4 col-md-6' onClick={() => handleOrderDetail(order?._id)}>
+            <div className='col-lg-4 col-md-6'>
               <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
                 <div className="card-header d-flex justify-content-between align-items-center bg-light">
                   <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
                   <span className="text-muted small">{order?.deliveryTime}</span>
                 </div>
                 <div className="card-body">
-                  <div className="card-body-inner-top">
+                  <div
+                    className="card-body-inner-top"
+                    onClick={() => handleOrderDetail(order?._id)}
+                  >
                     <h5 className="card-title mb-2">{order?.category?.name}</h5>
                     <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
                   </div>
