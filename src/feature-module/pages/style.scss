@@ -18,6 +18,7 @@
     left: 0;
     font-size: 26px;
     color: #000000;
+    cursor: pointer;
 }
 
 
@@ -30,7 +31,7 @@ button.active-button, button.active-button:hover {
     background: linear-gradient(153deg, #7B80F6, #4CDEDE);
     /* width: 140px; */
     /* height: 40px; */
-    padding: 10px 70px;
+    padding: 10px 20px;
     border: 0px;
     font-family: "Roboto", sans-serif;
     width: 47%;  
@@ -44,7 +45,7 @@ button.history-button:hover {
     border: linear-gradient(153deg, #7B80F6, #4CDEDE) !important;
 }
 button.history-button {
-    padding: 10px 70px;
+    padding: 10px 20px;
     color: #7B80F6 Important;
     border: 1px solid transparent;
     border-radius: 10px;
@@ -53,6 +54,11 @@ button.history-button {
     background-clip: padding-box, border-box;
     font-family: "Roboto", sans-serif;
     width: 47%;
+}
+.dropdown-toggle {
+    &::after {
+        display: none;
+    }
 }
 
 .card-header {
@@ -117,7 +123,11 @@ p.card-text-3 span.text-muted.small{
 
 .delivery-download-button {
     display: flex;
+    align-items: center;
     gap: 16px;
+    justify-content: space-between;
+    position: relative;
+    z-index: 9999999;
 }
 
 
@@ -128,11 +138,23 @@ p.card-text-3 span.text-muted.small{
     color: #000;
     font-family: "Roboto", sans-serif;
     font-weight: 500 !important;
-    font-size: 16px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    z-index: 99999;
+}
+.card-body.mobile-p-0 {
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .delivery-download-button span.delivery-button img {
     margin-right: 5px;
+    width: 10px;
+    height: auto;
 }
 
 .delivery-download-button span.download-button, .delivery-download-button .download-button  {
@@ -142,14 +164,22 @@ p.card-text-3 span.text-muted.small{
     color: #333;
     font-family: "Roboto", sans-serif;
     font-weight: 500 !important;
-    font-size: 16px;
+    font-size: 12px;
     appearance: auto;
     -webkit-appearance: auto;
     max-width: 175px;
 }
 
 .delivery-download-button span.download-button svg {
-    font-size: 22px;
+    font-size: 18px;
+}
+
+.delivery-download-button span.download-button.bg-primary {
+    width: 100%;
+    position: relative;
+    z-index: 99999;
+    cursor: pointer;
+    padding: 8px;
 }
 
 @media (max-width: 767.98px) {

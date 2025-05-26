@@ -37,7 +37,7 @@ export default function CategoriesList() {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.responseMessage);
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
     }
   };
@@ -66,12 +66,12 @@ export default function CategoriesList() {
       try {
         const result: any = await deleteCategory(selectedCategory._id);
         if (result.data.responseMessage) {
-          toast.success(result.data.responseMessage);
+          toast.success(result.data.responseMessage, { autoClose: 5000 });
           fetchServices();
         }
       } catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(error.response?.data?.responseMessage);
+          toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
         }
       }
       setShowDeleteModal(false);
@@ -101,7 +101,7 @@ export default function CategoriesList() {
       <div
         style={{
           position: 'relative',
-          marginBottom: '20px',
+          paddingBottom: '50px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -113,27 +113,29 @@ export default function CategoriesList() {
           Categories
         </h4>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div 
+          // style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+          >
+        <FaSearch
+            onClick={() => setShowSearchInput(!showSearchInput)}
+            style={{ fontSize: '18px', cursor: 'pointer', position: 'absolute', top: '0px', right: '0px' }}
+          />
           {showSearchInput && (
             <input
               type="text"
+              className='form-control'
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
-              style={{
-                height: '30px',
-                padding: '4px 10px',
-                fontSize: '14px',
-                width: '180px',
-                borderRadius: '4px',
-                border: '1px solid #ccc'
-              }}
+               style={{
+                position: 'absolute',
+                right: '0px',
+                bottom: "5px",
+                transition: "1s all ease-in-out"
+               }}
             />
           )}
-          <FaSearch
-            onClick={() => setShowSearchInput(!showSearchInput)}
-            style={{ fontSize: '18px', cursor: 'pointer' }}
-          />
+          
         </div>
       </div>
 

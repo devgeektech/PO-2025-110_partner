@@ -10,6 +10,7 @@ import { addCategory, getCategoryDetail, updateCategory } from "../../services/c
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { all_routes } from "../router/all_routes";
+import { FaAngleLeft } from "react-icons/fa";
 
 type CategoryDetailType = {
   name?: string;
@@ -45,7 +46,7 @@ export default function AddServicesTabContent() {
     description: Yup.string(),
     image: Yup.mixed().when([], {
       is: () => !isEditMode,
-      then: schema => schema.required("Image is required"),
+      then: schema => schema.required("Icon is required"),
     }),
   });
 
@@ -79,13 +80,13 @@ export default function AddServicesTabContent() {
           navigateToListing(result);
         }
 
-        toast.success("Service saved successfully");
+        toast.success("Service saved successfully", { autoClose: 5000 });
         resetForm();
         setSelectedImage(null);
         setStatus("Active");
       } catch (error: any) {
         console.log(error, ">>> error");
-        toast.error(error.response?.data?.responseMessage);
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
     },
   });
@@ -114,10 +115,15 @@ export default function AddServicesTabContent() {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.responseMessage);
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
     }
   };
+
+  const handleBackRoute = () => {
+    navigate(route.services + `?token=${token}&partnerId=${partnerId}`)
+  };
+
 
   useEffect(() => {
     if (id) {
@@ -131,7 +137,11 @@ export default function AddServicesTabContent() {
   return (
     <div className="accountSettingTab">
       <div className="personalIformation bgFormColor p-4 formEditWrap mb-3">
-        <div className="service-heading mb-2">
+        
+        <div className=" service-heading mb-2">
+          <div className="left-icon">
+            <FaAngleLeft onClick={() => handleBackRoute()}/>
+          </div>
           <h3 className="mb-3 text-center">{isEditMode ? "Edit Service" : "Add Service"}</h3>
         </div>
         <Form onSubmit={formik.handleSubmit}>
@@ -154,7 +164,7 @@ export default function AddServicesTabContent() {
 
           {/* Upload Image */}
           <Form.Group className="mb-3">
-            <Form.Label>{isEditMode ? "Update Service Image" : "Add Service Image"}</Form.Label>
+            <Form.Label>{isEditMode ? "Update Service Icon" : "Add Service Icon"}</Form.Label>
             <div className="uploadBox text-center p-4 border border-light rounded">
               <Form.Control
                 type="file"

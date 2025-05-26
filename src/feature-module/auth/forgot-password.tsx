@@ -38,14 +38,14 @@ const ForgotPassword = () => {
       try {
         const { data: { result } } = await forgotPassword(values.email);
         console.log(result);
-        toast.success('Password reset link sent successfully!');
+        toast.success('Password reset link sent successfully!', { autoClose: 5000 });
         setError(null);
 
         navigate('/auth/confirm-email', { state: { email:values.email } });
       } catch (error) {
         setSubmitting(false);
         setStatus('The login detail is incorrect');
-        toast.error(LANG.ENTER_REGISTERED_EMAIL);
+        toast.error(LANG.ENTER_REGISTERED_EMAIL, { autoClose: 5000 });
         setError('Please look the entered email is correct.');
       }
     },

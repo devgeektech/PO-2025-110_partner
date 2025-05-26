@@ -45,7 +45,7 @@ const Login = () => {
         const result = await loginUser(values);
 
         if (result.status == 200) {
-          toast.success('The profile verification code has been sent to your email.');
+          toast.success('The profile verification code has been sent to your email.', { autoClose: 5000 });
           localStorage.setItem('token', result.data?.data?.accessToken);
           localStorage.setItem('id', result.data?.data?._id);
 
@@ -63,7 +63,7 @@ const Login = () => {
         setLoading(false);
       } catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(error.response?.data?.responseMessage)
+          toast.error(error.response?.data?.responseMessage, { autoClose: 5000 })
         }
         console.log(error, loading)
         setSubmitting(false);

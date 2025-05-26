@@ -43,7 +43,7 @@ const Orders = () => {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.responseMessage);
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
     }
   };
@@ -162,20 +162,20 @@ const Orders = () => {
           {orders.map((order: any, index: any) => (
             <div className='col-lg-4 col-md-6'>
               <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
-                <div className="card-header d-flex justify-content-between align-items-center bg-light">
+                <div onClick={() => handleOrderDetail(order?._id)} className="card-header d-flex justify-content-between align-items-center bg-light">
                   <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
                   <span className="text-muted small">{order?.deliveryTime}</span>
                 </div>
-                <div className="card-body">
+                <div className="card-body mobile-p-0">
+                  <div onClick={() => handleOrderDetail(order?._id)}>
                   <div
-                    className="card-body-inner-top"
-                    onClick={() => handleOrderDetail(order?._id)}
-                  >
+                    className="card-body-inner-top">
                     <h5 className="card-title mb-2">{order?.category?.name}</h5>
                     <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
                   </div>
                   <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>
                   <p className="card-text card-text-3 fw-bold mb-2">{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
+                  </div>
                   <div className="delivery-download-button">
                     <span className="delivery-button badge bg-primary">
                       <img src="/assets/img/delivery-icon.png" alt="" />

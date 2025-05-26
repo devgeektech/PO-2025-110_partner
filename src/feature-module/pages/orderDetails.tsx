@@ -24,12 +24,12 @@ const OrderDetails = () => {
       try {
         const result = await updateOrderById(id, { status: event.target.value });
         if (result.data) {
-          toast.success(result.data.responseMessage)
+          toast.success(result.data.responseMessage, { autoClose: 5000 })
         }
       } catch (error) {
         if (error instanceof AxiosError) {
           let message = error.response?.data?.responseMessage || error.response?.data?.message || "Something Went Wrong"
-          toast.error(message);
+          toast.error(message, { autoClose: 5000 });
         }
       }
     }
@@ -73,13 +73,13 @@ const OrderDetails = () => {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.responseMessage);
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
     }
   };
 
   const handleBackRoute = () => {
-    navigate(route.ordersRedirect + `?token=${token}&partnerId=${partnerId}`)
+    navigate(route.orders + `?token=${token}&partnerId=${partnerId}`)
   };
 
 
@@ -134,7 +134,7 @@ const OrderDetails = () => {
                 <option value="Laundry is cleaned">Laundry is cleaned</option>
                 <option value="Completed">Completed</option>
               </Form.Select>
-              <span className="Order-id-98"> Order ID: {order.orderId}</span>
+              {/* <span className="Order-id-98"> Order ID: {order.orderId}</span> */}
             </div>
             {/* <div className="delivery-download-button delivery-download-button-2">
                  <span className="download-button bg-primary"> {order.status} <MdOutlineKeyboardArrowDown /></span>
@@ -142,8 +142,12 @@ const OrderDetails = () => {
               </div> */}
           </div>
 
-          <div className="order-no-110">
+          {/* <div className="order-no-110">
             <p className="card-text">Order no:{order.orderId}</p>
+          </div> */}
+
+          <div className="order-no-110">
+            <p className="card-text">Instructions:<span style={{fontSize: "0.875rem", fontWeight: "300", marginLeft: "5px"}}>{order.instructions}</span></p>
           </div>
 
           <div className="per-kilogram-area">

@@ -56,7 +56,7 @@ const ChangePassword = () => {
         const result = await createNewPassword(payload);
 
         if (result.status == 200) {
-          toast.success(LANG.LOGIN_SUCCESSFULLY);
+          toast.success(LANG.LOGIN_SUCCESSFULLY, { autoClose: 5000 });
           localStorage.setItem('token', result.data?.data?.token);
           localStorage.setItem('id', result.data?.data?._id);
           dispatch(setLogin(true));
@@ -65,13 +65,13 @@ const ChangePassword = () => {
           // navigate(route.Settings);
         }
         else {
-          toast.error(LANG.UNEXPECTED_ERROR);
+          toast.error(LANG.UNEXPECTED_ERROR, { autoClose: 5000 });
         }
         setSubmitting(false);
       }
       catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(error.response?.data?.responseMessage || LANG.UNEXPECTED_ERROR);
+          toast.error((error.response?.data?.responseMessage || LANG.UNEXPECTED_ERROR), { autoClose: 5000 });
         }
         setSubmitting(false);
       }
