@@ -114,7 +114,7 @@ const OrderDetails = () => {
               <p className="card-text text-muted small mb-1">Order ID: {order.orderId}</p>
             </div>
             <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>
-            <p className="card-text card-text-3 fw-bold mb-2">{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
+            <p className="card-text card-text-3 fw-bold mb-2">₱{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
             <div className="delivery-download-button">
               <span className="delivery-button-2 badge bg-primary"><img src="/assets/img/delivery-icon-white.png" alt="" /> {order.status}</span>
             </div>
