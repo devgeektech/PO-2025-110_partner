@@ -106,14 +106,14 @@ const OrderDetails = () => {
         {/* Orders List */}
         <div className="card mb-3 shadow-sm border-0 order-mob">
           <div className="card-header d-flex justify-content-between align-items-center bg-light">
-            <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
+            <span className="fw-bold">{formatDate(order?.deliveryDate)}</span>
             <span className="text-muted small">{order?.pickupTime}</span>
           </div>
           <div className="card-body card-body-2 order-details-card-body">
             <div className="card-body-inner-top">
               <h5 className="card-title mb-2">
               <p className="card-text text-muted small mb-1">
-                {order?.services?.map((service:any) => service._id).join(', ')}
+                {order?.services?.map((service:any) => service?.serviceDetails?.name).join(', ')}
               </p>  
               </h5>
               <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
@@ -158,7 +158,7 @@ const OrderDetails = () => {
           <div className="per-kilogram-area">
             {order?.services?.map((service:any, index:any) => (
               <div className="per-kilogram-inner-top" key={service?._id || index}>
-               {service?.serviceDetails?.name}
+               <p>{service?.serviceDetails?.name}</p>
                 <div className="per-kilogram-inner">
                   <div className="weightmachine">
                     <p className="card-text weightmachine-image">

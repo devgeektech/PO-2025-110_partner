@@ -175,7 +175,7 @@ const Orders = () => {
             <div className='col-lg-4 col-md-6'>
               <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
                 <div onClick={() => handleOrderDetail(order?._id)} className="card-header d-flex justify-content-between align-items-center bg-light">
-                  <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
+                  <span className="fw-bold">{formatDate(order?.deliveryDate)}</span>
                   <span className="text-muted small">{order?.pickupTime}</span>
                 </div>
                 <div className="card-body mobile-p-0">
