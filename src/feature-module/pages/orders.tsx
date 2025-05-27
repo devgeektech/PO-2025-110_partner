@@ -38,8 +38,20 @@ const Orders = () => {
         localStorage.setItem('token', token);
       }
       const result = await getOrders(tab);
-      if (result.data.data) {
-        setOrders(result.data.data)
+      if (result.data.data && result.data.data.length > 0) {
+        const data = result.data.data;
+  
+        data.forEach((item: any) => {
+          let serviceDetails = item.services && item.services.length > 0
+            ? item.services.map((service: any) => service?.serviceDetails?.name).join(', ')
+            : '';
+  
+          item.serviceDetails = serviceDetails;
+        });
+  
+        console.log(data,">>> dd")
+
+        setOrders(data);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -60,10 +72,10 @@ const Orders = () => {
         <div className="card mb-3 border-0 order-mob">
           <h3 className="text-center mb-4 main-text">Invoice</h3>
           <div className="card-body-invoice">
-            <div className="card-body-invoice-inner">
+          <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Service :</h5>
               <p className="card-text text-muted small mb-1">
-                {order?.category?.name}
+                {order?.serviceDetails}
               </p>
             </div>
             <div className="card-body-invoice-inner">
@@ -164,13 +176,13 @@ const Orders = () => {
               <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
                 <div onClick={() => handleOrderDetail(order?._id)} className="card-header d-flex justify-content-between align-items-center bg-light">
                   <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
-                  <span className="text-muted small">{order?.deliveryTime}</span>
+                  <span className="text-muted small">{order?.pickupTime}</span>
                 </div>
                 <div className="card-body mobile-p-0">
                   <div onClick={() => handleOrderDetail(order?._id)}>
                   <div
                     className="card-body-inner-top">
-                    <h5 className="card-title mb-2">{order?.category?.name}</h5>
+                    <h5 className="card-title mb-2"> {order?.serviceDetails}</h5>
                     <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
                   </div>
                   <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>

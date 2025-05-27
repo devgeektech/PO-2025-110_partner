@@ -16,6 +16,7 @@ const OrderDetails = () => {
   const partnerId = queryParams.get("partnerId");
   const navigate = useNavigate();
   const route = all_routes;
+  const [order, setOrder] = useState<any>({})
 
   const handleStatusChange = async (event: any) => {
     setStatus(event.target.value);
@@ -49,26 +50,23 @@ const OrderDetails = () => {
     return `${day} ${month} ${year}`;
   };
 
-  const [order, setOrder] = useState<any>({
-    date: '23 March 2025',
-    time: '10:00 AM',
-    orderId: '105',
-    title: 'Wash & Fold',
-    address: 'Cagayan Valley Road, Bonga Plaridel Philippines',
-    amount: '₱ 100.00',
-    payment: 'Paid with Wallet',
-    status: 'On the Way'
-  })
-
   const fetchOrderDetails = async () => {
     try {
       if (token) {
         localStorage.setItem('token', token);
       }
       const result = await getOrderById(id);
-      console.log("fetch wokring ", result.data.data.status)
+     
       if (result.data.data) {
-        setOrder(result.data.data)
+        let data = result.data.data;
+      
+        let serviceDetails = data.services.length 
+        ? data.services.map((service: any) => service?.serviceDetails?.name).join(', ')
+        : '';
+      
+        data.serviceDetails = serviceDetails;
+               
+        setOrder(data);
         setStatus(result.data.data.status)
       }
     } catch (error) {
@@ -87,6 +85,9 @@ const OrderDetails = () => {
     fetchOrderDetails()
   }, [])
 
+  useEffect(()=> {
+
+  }, [])
 
   return (
     <div className="content">
@@ -106,23 +107,27 @@ const OrderDetails = () => {
         <div className="card mb-3 shadow-sm border-0 order-mob">
           <div className="card-header d-flex justify-content-between align-items-center bg-light">
             <span className="fw-bold">{formatDate(order?.pickupDate)}</span>
-            <span className="text-muted small">{order?.deliveryTime}</span>
+            <span className="text-muted small">{order?.pickupTime}</span>
           </div>
           <div className="card-body card-body-2 order-details-card-body">
             <div className="card-body-inner-top">
-              <h5 className="card-title mb-2">{order?.category?.name}</h5>
-              <p className="card-text text-muted small mb-1">Order ID: {order.orderId}</p>
+              <h5 className="card-title mb-2">
+              <p className="card-text text-muted small mb-1">
+                {order?.services?.map((service:any) => service._id).join(', ')}
+              </p>  
+              </h5>
+              <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
             </div>
             <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>
-            <p className="card-text card-text-3 fw-bold mb-2">₱{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
+            <p className="card-text card-text-3 fw-bold mb-2">₱{order?.amount} <span className="text-muted small">(Paid with {order?.paymentType})</span></p>
             <div className="delivery-download-button">
-              <span className="delivery-button-2 badge bg-primary"><img src="/assets/img/delivery-icon-white.png" alt="" /> {order.status}</span>
+              <span className="delivery-button-2 badge bg-primary"><img src="/assets/img/delivery-icon-white.png" alt="" /> {order?.status}</span>
             </div>
           </div>
 
           <div className="card-body-2">
             <div className="card-body-inner-top">
-              <h5 className="card-title mb-2">{order.title}</h5>
+              <h5 className="card-title mb-2">{order?.title}</h5>
 
             </div>
             <div className="delivery-download-button delivery-download-button-2">
@@ -147,26 +152,48 @@ const OrderDetails = () => {
           </div> */}
 
           <div className="order-no-110">
-            <p className="card-text">Instructions:<span style={{fontSize: "0.875rem", fontWeight: "300", marginLeft: "5px"}}>{order.instructions}</span></p>
+            <p className="card-text">Instructions:<span style={{fontSize: "0.875rem", fontWeight: "300", marginLeft: "5px"}}>{order?.instructions}</span></p>
           </div>
 
           <div className="per-kilogram-area">
-            <div className="per-kilogram-inner-top">
-              <div className="per-kilogram-inner">
-                <div className="weightmachine">
-                  <p className="card-text weightmachine-image"><img src="/assets/img/weight-machine.png" alt="" /></p>
+            {order?.services?.map((service:any, index:any) => (
+              <div className="per-kilogram-inner-top" key={service?._id || index}>
+               {service?.serviceDetails?.name}
+                <div className="per-kilogram-inner">
+                  <div className="weightmachine">
+                    <p className="card-text weightmachine-image">
+                      <img
+                        src={
+                          service.type === 'bag'
+                            ? '/assets/img/Bag.png'
+                            : '/assets/img/weight-machine.png'
+                        }
+                        alt=""
+                      />
+                    </p>
+                  </div>
+                  <div className="weightmachine">
+                    <p className="card-text weightmachine-text-1">
+                      {service.type === 'bag' ? 'Per Bag' : 'Per Kilogram'}
+                    </p>
+                    <p className="card-text weightmachine-text-2">
+                      {service?.serviceDetails?.description ||
+                        'Perfect for mixed loads. Pay based on total laundry Weight.'}
+                    </p>
+                  </div>
                 </div>
-                <div className="weightmachine">
-                  <p className="card-text weightmachine-text-1">Per Kilogram</p>
-                  <p className="card-text weightmachine-text-2">Perfect for mixed loads. Pay based on total laundry Weight.</p>
+
+                <div className="weightmachine-input-fiels">
+                  <input
+                    type="text"
+                    className="input-kg"
+                    placeholder="6 Kg"
+                    readOnly={true}
+                    value={service?.amount}
+                  />
                 </div>
               </div>
-
-              <div className="weightmachine-input-fiels">
-                <input type="text" className="input-kg" placeholder="6 Kg" readOnly={true} value={order.weight} />
-              </div>
-            </div>
-
+            ))}
           </div>
 
         </div>
