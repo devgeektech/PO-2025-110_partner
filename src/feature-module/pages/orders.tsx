@@ -85,7 +85,7 @@ const Orders = () => {
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Date & Time :</h5>
               <p className="card-text text-muted small mb-1">
-                {formatDate(order?.pickupDate)}
+                {formatDate(order?.deliveryDate)}
               </p>
             </div>
             <div className="card-body-invoice-inner">
