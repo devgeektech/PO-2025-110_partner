@@ -177,8 +177,8 @@ const OrderDetails = () => {
                       {service.type === 'bag' ? 'Per Bag' : 'Per Kilogram'}
                     </p>
                     <p className="card-text weightmachine-text-2">
-                      {service?.serviceDetails?.description ||
-                        'Perfect for mixed loads. Pay based on total laundry Weight.'}
+                      { service.type !== 'bag' ?
+                        'Perfect for mixed loads. Pay based on total laundry Weight.': 'Flat-rate pricing per PeakUp bag. No need to worry about weight.'}
                     </p>
                   </div>
                 </div>
