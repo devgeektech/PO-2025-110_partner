@@ -157,7 +157,7 @@ const OrderDetails = () => {
 
           <div className="per-kilogram-area">
             {order?.services?.map((service:any, index:any) => (
-              <div className="per-kilogram-inner-top" key={service?._id || index}>
+              <div className="per-kilogram-inner-top mb-3" key={service?._id || index}>
                <p>{service?.serviceDetails?.name}</p>
                 <div className="per-kilogram-inner">
                   <div className="weightmachine">
