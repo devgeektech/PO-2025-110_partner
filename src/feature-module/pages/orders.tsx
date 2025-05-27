@@ -114,7 +114,7 @@ const Orders = () => {
     </div>
   );
 
-  const handleDownload = (order: any) => {
+  const handleDownloadOld = (order: any) => {
     const container = document.createElement("div");
     container.style.position = "absolute";
     container.style.left = "-9999px";
@@ -142,6 +142,21 @@ const Orders = () => {
       .then(() => {
         document.body.removeChild(container);
       });
+  };
+
+  const handleDownload = (order: any) => {
+    // let invoiceUrl = order?.invoiceUrl;
+    console.log('ORDER', order);
+    const invoiceUrl = order?.invoiceUrl;
+    if (!invoiceUrl) return;
+    // Send to mobile app via postMessage
+    window.postMessage(
+      JSON.stringify({
+        type: 'invoiceDownload',
+        url: invoiceUrl,
+      }),
+      '*'
+    );
   };
 
   const handleBackRoute = () => {
