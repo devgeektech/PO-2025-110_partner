@@ -86,7 +86,9 @@ export default function AddServicesTabContent() {
           navigateToListing(result);
         }
 
-        toast.success("Service added successfully and is pending admin approval. Please enable the service once approved", { autoClose: 5000 });
+        let message = "Service added successfully and is pending admin approval. Please enable the service once approved"
+        if(id) message = "Service updated successfully"
+        toast.success(message, { autoClose: 5000 });
         resetForm();
         setSelectedImage(null);
         setStatus("Active");
