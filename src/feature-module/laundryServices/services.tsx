@@ -160,6 +160,7 @@ export default function CategoriesList() {
                 alignItems: 'center',
                 backgroundColor: '#f5f5f9'
               }}
+              onClick={() => handleEditClick(cat)}
             >
               <img
                 src={process.env.REACT_APP_IMAGE_URL + cat.photo}
