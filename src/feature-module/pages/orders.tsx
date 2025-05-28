@@ -1,30 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import './style.scss';
-import { FaAngleLeft } from 'react-icons/fa';
-import { MdOutlineFileDownload } from 'react-icons/md';
-import { getOrders } from '../../services/orders';
-import { toast } from 'react-toastify';
-import { AxiosError } from 'axios';
-import html2pdf from 'html2pdf.js';
-import { all_routes } from '../router/all_routes';
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./style.scss";
+import { FaAngleLeft } from "react-icons/fa";
+import { MdOutlineFileDownload } from "react-icons/md";
+import { getOrders } from "../../services/orders";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import html2pdf from "html2pdf.js";
+import { all_routes } from "../router/all_routes";
 
 const Orders = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get('token');
+  const token = queryParams.get("token");
   const invoiceRef = useRef();
-  const [tab, setTab] = useState('active');
-  const partnerId = queryParams.get('partnerId');
+  const [tab, setTab] = useState("active");
+  const partnerId = queryParams.get("partnerId");
   const navigate = useNavigate();
   const route = all_routes;
 
   const formatDate = (isoDate: any) => {
     const date = new Date(isoDate);
-    const day = String(date.getDate()).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
     const monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
     ];
     const month = monthNames[date.getMonth()];
     const year = date.getFullYear();
@@ -38,7 +48,7 @@ const Orders = () => {
     setLoading(true);
     try {
       if (token) {
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
       }
       const result = await getOrders(tab);
       if (result.data.data && result.data.data.length > 0) {
@@ -47,8 +57,10 @@ const Orders = () => {
         data.forEach((item: any) => {
           let serviceDetails =
             item.services && item.services.length > 0
-              ? item.services.map((service: any) => service?.serviceDetails?.name).join(', ')
-              : '';
+              ? item.services
+                  .map((service: any) => service?.serviceDetails?.name)
+                  .join(", ")
+              : "";
 
           item.serviceDetails = serviceDetails;
         });
@@ -67,7 +79,7 @@ const Orders = () => {
   };
 
   const handleOrderDetail = (id: any) => {
-    const path = route.orderDetails.replace(':id', id);
+    const path = route.orderDetails.replace(":id", id);
     navigate(`${path}?token=${token}&partnerId=${partnerId}`);
   };
 
@@ -79,7 +91,9 @@ const Orders = () => {
           <div className="card-body-invoice">
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Service :</h5>
-              <p className="card-text text-muted small mb-1">{order?.serviceDetails}</p>
+              <p className="card-text text-muted small mb-1">
+                {order?.serviceDetails}
+              </p>
             </div>
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Amount Paid :</h5>
@@ -118,16 +132,16 @@ const Orders = () => {
   );
 
   const handleDownload = (order: any) => {
-    const container = document.createElement('div');
-    container.style.position = 'absolute';
-    container.style.left = '-9999px';
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.left = "-9999px";
     document.body.appendChild(container);
 
     const content = getInvoiceHTML(order);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'pdf-wrapper';
+    const wrapper = document.createElement("div");
+    wrapper.className = "pdf-wrapper";
 
-    const { render } = require('react-dom');
+    const { render } = require("react-dom");
     render(content, wrapper);
 
     container.appendChild(wrapper);
@@ -135,10 +149,10 @@ const Orders = () => {
     html2pdf()
       .set({
         margin: 0,
-        filename: 'invoice.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
+        filename: "invoice.pdf",
+        image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
       })
       .from(wrapper)
       .save()
@@ -159,27 +173,27 @@ const Orders = () => {
     <div className="content">
       <div className="container mt-4">
         <div className="left-icon">
-          <FaAngleLeft onClick={handleBackRoute} />
+          {/* <FaAngleLeft onClick={handleBackRoute} /> */}
           <h3 className="text-center mb-4 main-text">Orders</h3>
         </div>
 
         <div className="d-flex bg-white p-3 justify-content-center mb-3 active-history-button position-sticky top-0 z-3 ">
           <button
-            onClick={() => setTab('active')}
+            onClick={() => setTab("active")}
             className={
-              tab === 'active'
-                ? 'btn btn-outline-primary active-button'
-                : 'btn btn-outline-primary history-button'
+              tab === "active"
+                ? "btn btn-outline-primary active-button"
+                : "btn btn-outline-primary history-button"
             }
           >
             Active
           </button>
           <button
-            onClick={() => setTab('history')}
+            onClick={() => setTab("history")}
             className={
-              tab !== 'active'
-                ? 'btn btn-primary active-button'
-                : 'btn btn-outline-primary history-button'
+              tab !== "active"
+                ? "btn btn-primary active-button"
+                : "btn btn-outline-primary history-button"
             }
           >
             History
@@ -194,7 +208,18 @@ const Orders = () => {
           </div>
         ) : orders.length === 0 ? (
           <div className="text-center text-muted my-5">
-            <h3  style={{ textAlign: 'center', color: '#888' }}>No orders found.</h3>
+            <h3
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "50vh",
+                textAlign: "center",
+              }}
+            >
+              No orders found.
+            </h3>
           </div>
         ) : (
           <div className="row">
@@ -205,25 +230,31 @@ const Orders = () => {
                     onClick={() => handleOrderDetail(order?._id)}
                     className="card-header d-flex justify-content-between align-items-center bg-light"
                   >
-                    <span className="fw-bold">{formatDate(order?.deliveryDate)}</span>
-                    <span className="text-muted small">{order?.pickupTime}</span>
+                    <span className="fw-bold">
+                      {formatDate(order?.deliveryDate)}
+                    </span>
+                    <span className="text-muted small">
+                      {order?.pickupTime}
+                    </span>
                   </div>
                   <div className="card-body mobile-p-0">
                     <div onClick={() => handleOrderDetail(order?._id)}>
                       <div className="card-body-inner-top">
-                        <h5 className="card-title mb-2">{order?.serviceDetails}</h5>
+                        <h5 className="card-title mb-2">
+                          {order?.serviceDetails}
+                        </h5>
                         <p className="card-text text-muted small mb-1">
                           Order ID: {order?.orderId}
                         </p>
                       </div>
                       <p className="card-text card-text-2 text-muted small mb-1">
-                        {order?.customerAddresses?.address}{' '}
-                        {order?.customerAddresses?.city}{' '}
-                        {order?.customerAddresses?.state}{' '}
+                        {order?.customerAddresses?.address}{" "}
+                        {order?.customerAddresses?.city}{" "}
+                        {order?.customerAddresses?.state}{" "}
                         {order?.customerAddresses?.county}
                       </p>
                       <p className="card-text card-text-3 fw-bold mb-2">
-                        {order.amount}{' '}
+                        {order.amount}{" "}
                         <span className="text-muted small">
                           (Paid with {order.paymentType})
                         </span>

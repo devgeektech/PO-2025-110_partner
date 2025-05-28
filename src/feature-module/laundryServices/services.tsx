@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Button, Dropdown } from 'react-bootstrap';
-import { Plus } from 'react-bootstrap-icons';
-import { FaAngleLeft, FaSearch } from 'react-icons/fa';
-import { deleteCategory, getCategories } from '../../services/categories';
-import DeleteCategoryModal from './deleteService';
-import { BsThreeDotsVertical } from 'react-icons/bs';
-import { toast } from 'react-toastify';
-import { AxiosError } from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { all_routes } from '../router/all_routes';
+import React, { useEffect, useState } from "react";
+import { Card, Button, Dropdown } from "react-bootstrap";
+import { Plus } from "react-bootstrap-icons";
+import { FaAngleLeft, FaSearch } from "react-icons/fa";
+import { deleteCategory, getCategories } from "../../services/categories";
+import DeleteCategoryModal from "./deleteService";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import { all_routes } from "../router/all_routes";
 
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showSearchInput, setShowSearchInput] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -28,7 +28,7 @@ export default function CategoriesList() {
     setLoading(true);
     try {
       if (token) {
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
       }
 
       if (partnerId) {
@@ -47,11 +47,13 @@ export default function CategoriesList() {
   };
 
   const handleAddCatgegory = () => {
-    navigate(route.addserviceRedirect + `?token=${token}&partnerId=${partnerId}`)
+    navigate(
+      route.addserviceRedirect + `?token=${token}&partnerId=${partnerId}`
+    );
   };
 
   const handleBackRoute = () => {
-    navigate(route.servicesRedirect + `?token=${token}&partnerId=${partnerId}`)
+    navigate(route.servicesRedirect + `?token=${token}&partnerId=${partnerId}`);
   };
 
   const handleDeleteClick = (category: any) => {
@@ -61,7 +63,7 @@ export default function CategoriesList() {
 
   const handleEditClick = (category: any) => {
     setSelectedCategory(category);
-    const path = route.editserviceRedirect.replace(':id', category._id);
+    const path = route.editserviceRedirect.replace(":id", category._id);
     navigate(`${path}?token=${token}&partnerId=${partnerId}`);
   };
 
@@ -75,7 +77,9 @@ export default function CategoriesList() {
         }
       } catch (error) {
         if (error instanceof AxiosError) {
-          toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
+          toast.error(error.response?.data?.responseMessage, {
+            autoClose: 5000,
+          });
         }
       }
       setShowDeleteModal(false);
@@ -89,7 +93,7 @@ export default function CategoriesList() {
 
   const handleSearch = (value: any) => {
     setSearchTerm(value);
-  }
+  };
 
   useEffect(() => {
     fetchServices();
@@ -100,39 +104,52 @@ export default function CategoriesList() {
   }, []);
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: "20px" }}>
       <div
         style={{
-          position: 'relative',
-          paddingBottom: '50px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          position: "relative",
+          paddingBottom: "50px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={() => handleBackRoute()} />
+        {/* <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={() => handleBackRoute()} /> */}
 
-        <h4 style={{ margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+        <h4
+          style={{
+            margin: 0,
+            position: "absolute",
+            left: "50%",
+            transform: "translateX(-50%)",
+          }}
+        >
           Services
         </h4>
 
         <div>
           <FaSearch
             onClick={() => setShowSearchInput(!showSearchInput)}
-            style={{ fontSize: '18px', cursor: 'pointer', position: 'absolute', top: '0px', right: '0px' }}
+            style={{
+              fontSize: "18px",
+              cursor: "pointer",
+              position: "absolute",
+              top: "0px",
+              right: "0px",
+            }}
           />
           {showSearchInput && (
             <input
               type="text"
-              className='form-control'
+              className="form-control"
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
               style={{
-                position: 'absolute',
-                right: '0px',
+                position: "absolute",
+                right: "0px",
                 bottom: "5px",
-                transition: "1s all ease-in-out"
+                transition: "1s all ease-in-out",
               }}
             />
           )}
@@ -141,24 +158,35 @@ export default function CategoriesList() {
 
       <div>
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '20px' }}>
+          <div style={{ textAlign: "center", padding: "20px" }}>
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
         ) : categories.length === 0 ? (
-          <h3 style={{ textAlign: 'center', color: '#888' }}>No services found.</h3>
+          <h3
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "80vh",
+              textAlign: "center",
+            }}
+          >
+            No services found.
+          </h3>
         ) : (
           categories.map((cat: any) => (
             <Card
               key={cat._id}
               style={{
-                marginBottom: '15px',
-                padding: '15px',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                backgroundColor: '#f5f5f9'
+                marginBottom: "15px",
+                padding: "15px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: "#f5f5f9",
               }}
               onClick={() => handleEditClick(cat)}
             >
@@ -166,36 +194,40 @@ export default function CategoriesList() {
                 src={process.env.REACT_APP_IMAGE_URL + cat.photo}
                 alt={cat.name}
                 style={{
-                  width: '50px',
-                  height: '50px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                  marginRight: '15px'
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  marginRight: "15px",
                 }}
               />
               <div style={{ flexGrow: 1 }}>
-                <h6 style={{ marginBottom: '4px', fontWeight: 'bold' }}>{cat.name}</h6>
-                <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>{cat.description}</p>
+                <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>
+                  {cat.name}
+                </h6>
+                <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
+                  {cat.description}
+                </p>
               </div>
               <div onClick={(e) => e.stopPropagation()}>
-              <Dropdown align="end">
-                <Dropdown.Toggle
-                  as="button"
-                  variant="link"
-                  className="text-muted p-0 border-0 bg-transparent"
-                >
-                  <BsThreeDotsVertical size={20} />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => handleEditClick(cat)}>
-                    Edit
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
-                    Delete
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
+                <Dropdown align="end">
+                  <Dropdown.Toggle
+                    as="button"
+                    variant="link"
+                    className="text-muted p-0 border-0 bg-transparent"
+                  >
+                    <BsThreeDotsVertical size={20} />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => handleEditClick(cat)}>
+                      Edit
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
+                      Delete
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
             </Card>
           ))
         )}
@@ -203,13 +235,13 @@ export default function CategoriesList() {
 
       <Button
         style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          borderRadius: '50%',
-          padding: '12px 15px',
-          fontSize: '20px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          borderRadius: "50%",
+          padding: "12px 15px",
+          fontSize: "20px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
         }}
         variant="primary"
       >

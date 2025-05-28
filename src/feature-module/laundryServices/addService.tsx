@@ -253,14 +253,20 @@ export default function AddServicesTabContent() {
             <Form.Label>Description</Form.Label>
             <Form.Control
               as="textarea"
+              name="description"
               rows={3}
               placeholder="Service description"
               {...formik.getFieldProps("description")}
               className={clsx("commonInput", {
                 "border border-danger":
-                  formik.touched.description && formik.errors.description,
+                  formik.touched.description && formik.touched.description,
               })}
             />
+           {formik.touched.description && formik.errors.description && (
+            <div className="text-danger mt-1">
+              {formik.errors.description}
+            </div>
+          )}
           </Form.Group>
 
           {/* Status */}
