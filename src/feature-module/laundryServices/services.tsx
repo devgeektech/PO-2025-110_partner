@@ -177,6 +177,7 @@ export default function CategoriesList() {
                 <h6 style={{ marginBottom: '4px', fontWeight: 'bold' }}>{cat.name}</h6>
                 <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>{cat.description}</p>
               </div>
+              <div onClick={(e) => e.stopPropagation()}>
               <Dropdown align="end">
                 <Dropdown.Toggle
                   as="button"
@@ -194,6 +195,7 @@ export default function CategoriesList() {
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
+            </div>
             </Card>
           ))
         )}
