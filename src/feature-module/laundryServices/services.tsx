@@ -16,6 +16,7 @@ export default function CategoriesList() {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState<boolean>(true);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get("token");
@@ -24,6 +25,7 @@ export default function CategoriesList() {
   const route = all_routes;
 
   const fetchServices = async () => {
+    setLoading(true);
     try {
       if (token) {
         localStorage.setItem('token', token);
@@ -39,6 +41,8 @@ export default function CategoriesList() {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,9 +91,8 @@ export default function CategoriesList() {
     setSearchTerm(value);
   }
 
-
   useEffect(() => {
-    fetchServices()
+    fetchServices();
   }, [searchTerm]);
 
   useEffect(() => {
@@ -110,13 +113,11 @@ export default function CategoriesList() {
         <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={() => handleBackRoute()} />
 
         <h4 style={{ margin: 0, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-          Categories
+          Services
         </h4>
 
-        <div 
-          // style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-          >
-        <FaSearch
+        <div>
+          <FaSearch
             onClick={() => setShowSearchInput(!showSearchInput)}
             style={{ fontSize: '18px', cursor: 'pointer', position: 'absolute', top: '0px', right: '0px' }}
           />
@@ -127,65 +128,74 @@ export default function CategoriesList() {
               placeholder="Search..."
               value={searchTerm}
               onChange={(e) => handleSearch(e.target.value)}
-               style={{
+              style={{
                 position: 'absolute',
                 right: '0px',
                 bottom: "5px",
                 transition: "1s all ease-in-out"
-               }}
+              }}
             />
           )}
-          
         </div>
       </div>
 
       <div>
-        {categories.map((cat: any) => (
-          <Card
-            key={cat._id}
-            style={{
-              marginBottom: '15px',
-              padding: '15px',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: '#f5f5f9'
-            }}
-          >
-            <img
-              src={process.env.REACT_APP_IMAGE_URL + cat.photo}
-              alt={cat.name}
-              style={{
-                width: '50px',
-                height: '50px',
-                objectFit: 'cover',
-                borderRadius: '8px',
-                marginRight: '15px'
-              }}
-            />
-            <div style={{ flexGrow: 1 }}>
-              <h6 style={{ marginBottom: '4px', fontWeight: 'bold' }}>{cat.name}</h6>
-              <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>{cat.description}</p>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
-            <Dropdown align="end">
-              <Dropdown.Toggle
-                as="button"
-                variant="link"
-                className="text-muted p-0 border-0 bg-transparent"
-              >
-                <BsThreeDotsVertical size={20} />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => handleEditClick(cat)}>
-                  Edit
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
-                  Delete
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Card>
-        ))}
+          </div>
+        ) : categories.length === 0 ? (
+          <h3 style={{ textAlign: 'center', color: '#888' }}>No services found.</h3>
+        ) : (
+          categories.map((cat: any) => (
+            <Card
+              key={cat._id}
+              style={{
+                marginBottom: '15px',
+                padding: '15px',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#f5f5f9'
+              }}
+            >
+              <img
+                src={process.env.REACT_APP_IMAGE_URL + cat.photo}
+                alt={cat.name}
+                style={{
+                  width: '50px',
+                  height: '50px',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                  marginRight: '15px'
+                }}
+              />
+              <div style={{ flexGrow: 1 }}>
+                <h6 style={{ marginBottom: '4px', fontWeight: 'bold' }}>{cat.name}</h6>
+                <p style={{ margin: 0, fontSize: '13px', color: '#6c757d' }}>{cat.description}</p>
+              </div>
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  as="button"
+                  variant="link"
+                  className="text-muted p-0 border-0 bg-transparent"
+                >
+                  <BsThreeDotsVertical size={20} />
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => handleEditClick(cat)}>
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
+                    Delete
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Card>
+          ))
+        )}
       </div>
 
       <Button

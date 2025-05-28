@@ -6,7 +6,11 @@ import clsx from "clsx";
 import "./CategoriesList.scss";
 import { toast } from "react-toastify";
 import { CiCirclePlus } from "react-icons/ci";
-import { addCategory, getCategoryDetail, updateCategory } from "../../services/categories";
+import {
+  addCategory,
+  getCategoryDetail,
+  updateCategory,
+} from "../../services/categories";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AxiosError } from "axios";
 import { all_routes } from "../router/all_routes";
@@ -28,7 +32,8 @@ export default function AddServicesTabContent() {
   const navigate = useNavigate();
   const route = all_routes;
 
-  const [categoryDetail, setCategoryDetail] = useState<CategoryDetailType | null>(null);
+  const [categoryDetail, setCategoryDetail] =
+    useState<CategoryDetailType | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [status, setStatus] = useState("Active");
 
@@ -46,7 +51,7 @@ export default function AddServicesTabContent() {
     description: Yup.string(),
     image: Yup.mixed().when([], {
       is: () => !isEditMode,
-      then: schema => schema.required("Icon is required"),
+      then: (schema) => schema.required("Icon is required"),
     }),
   });
 
@@ -80,7 +85,7 @@ export default function AddServicesTabContent() {
           navigateToListing(result);
         }
 
-        toast.success("Service saved successfully", { autoClose: 5000 });
+        toast.success("Service added successfully and is pending admin approval. Please enable the service once approved", { autoClose: 5000 });
         resetForm();
         setSelectedImage(null);
         setStatus("Active");
@@ -108,7 +113,6 @@ export default function AddServicesTabContent() {
   const fetchDetails = async (id: string) => {
     try {
       const result = await getCategoryDetail(id);
-      console.log("result.data.data==>", JSON.stringify(result.data.data));
       if (result.data.data) {
         setCategoryDetail(result.data.data);
         setStatus(result.data.data.status || "Active");
@@ -121,9 +125,8 @@ export default function AddServicesTabContent() {
   };
 
   const handleBackRoute = () => {
-    navigate(route.services + `?token=${token}&partnerId=${partnerId}`)
+    navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
   };
-
 
   useEffect(() => {
     if (id) {
@@ -137,12 +140,13 @@ export default function AddServicesTabContent() {
   return (
     <div className="accountSettingTab">
       <div className="personalIformation bgFormColor p-4 formEditWrap mb-3">
-        
-        <div className=" service-heading mb-2">
+        <div className="service-heading mb-2">
           <div className="left-icon">
-            <FaAngleLeft onClick={() => handleBackRoute()}/>
+            <FaAngleLeft onClick={() => handleBackRoute()} />
           </div>
-          <h3 className="mb-3 text-center">{isEditMode ? "Edit Service" : "Add Service"}</h3>
+          <h3 className="mb-3 text-center">
+            {isEditMode ? "Edit Service" : "Add Service"}
+          </h3>
         </div>
         <Form onSubmit={formik.handleSubmit}>
           {/* Service Name */}
@@ -158,14 +162,18 @@ export default function AddServicesTabContent() {
               })}
             />
             {formik.touched.serviceName && formik.errors.serviceName && (
-              <div className="text-danger mt-1">{formik.errors.serviceName}</div>
+              <div className="text-danger mt-1">
+                {formik.errors.serviceName}
+              </div>
             )}
           </Form.Group>
 
           {/* Upload Image */}
           <Form.Group className="mb-3">
-            <Form.Label>{isEditMode ? "Update Service Icon" : "Add Service Icon"}</Form.Label>
-            <div className="uploadBox text-center p-4 border border-light rounded">
+            <Form.Label>
+              {isEditMode ? "Update Service Icon" : "Add Service Icon"}
+            </Form.Label>
+            <div className="uploadBox text-center p-4 border border-light rounded position-relative">
               <Form.Control
                 type="file"
                 accept="image/*"
@@ -173,12 +181,60 @@ export default function AddServicesTabContent() {
                 className="d-none"
                 id="upload-image"
               />
-              <CiCirclePlus />
-
-              {/* Show file name */}
-              <label htmlFor="upload-image" className="uploadLabel blue-label">
+              <label
+                htmlFor="upload-image"
+                className="uploadLabel blue-label cursor-pointer"
+              >
+                {!selectedImage && !categoryDetail?.photo && (
+                  <CiCirclePlus size={32} />
+                )}
                 {selectedImage?.name || categoryDetail?.photo || "Upload Icon"}
               </label>
+
+              {/* Image Preview */}
+              {(selectedImage || categoryDetail?.photo) && (
+                <div className="image-preview mt-3 position-relative d-inline-block">
+                  <img
+                    src={
+                      selectedImage
+                        ? URL.createObjectURL(selectedImage)
+                        : categoryDetail?.photo
+                          ? `${process.env.REACT_APP_IMAGE_URL}${categoryDetail.photo}`
+                          : ""
+                    }
+                    alt="Preview"
+                    className="img-thumbnail"
+                    style={{ maxWidth: "150px", maxHeight: "150px" }}
+                  />
+                  {/* Cross Icon to Remove */}
+                  {selectedImage && (
+                    <span
+                      className="remove-image"
+                      onClick={() => {
+                        setSelectedImage(null);
+                        formik.setFieldValue("image", "");
+                      }}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        background: "#fff",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        width: "24px",
+                        height: "24px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        border: "1px solid #ccc",
+                        transform: "translate(50%, -50%)",
+                      }}
+                    >
+                      ×
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             {formik.touched.image && formik.errors.image && (
               <div className="text-danger mt-1">{formik.errors.image}</div>

@@ -1,38 +1,41 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './style.scss';
-import { FaAngleLeft } from "react-icons/fa";
-import { FaLocationArrow } from 'react-icons/fa';
+import { FaAngleLeft } from 'react-icons/fa';
 import { MdOutlineFileDownload } from 'react-icons/md';
 import { getOrders } from '../../services/orders';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
-import html2pdf from "html2pdf.js";
+import html2pdf from 'html2pdf.js';
 import { all_routes } from '../router/all_routes';
+
 const Orders = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const token = queryParams.get("token");
+  const token = queryParams.get('token');
   const invoiceRef = useRef();
   const [tab, setTab] = useState('active');
-  const partnerId = queryParams.get("partnerId");
+  const partnerId = queryParams.get('partnerId');
   const navigate = useNavigate();
   const route = all_routes;
+
   const formatDate = (isoDate: any) => {
     const date = new Date(isoDate);
     const day = String(date.getDate()).padStart(2, '0');
     const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
     ];
     const month = monthNames[date.getMonth()];
     const year = date.getFullYear();
     return `${day} ${month} ${year}`;
   };
+
   const [orders, setOrders] = useState<any>([]);
-  const [filter, setFiter] = useState<string>("active")
+  const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
+    setLoading(true);
     try {
       if (token) {
         localStorage.setItem('token', token);
@@ -40,23 +43,26 @@ const Orders = () => {
       const result = await getOrders(tab);
       if (result.data.data && result.data.data.length > 0) {
         const data = result.data.data;
-  
+
         data.forEach((item: any) => {
-          let serviceDetails = item.services && item.services.length > 0
-            ? item.services.map((service: any) => service?.serviceDetails?.name).join(', ')
-            : '';
-  
+          let serviceDetails =
+            item.services && item.services.length > 0
+              ? item.services.map((service: any) => service?.serviceDetails?.name).join(', ')
+              : '';
+
           item.serviceDetails = serviceDetails;
         });
-  
-        console.log(data,">>> dd")
 
         setOrders(data);
+      } else {
+        setOrders([]);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,18 +71,15 @@ const Orders = () => {
     navigate(`${path}?token=${token}&partnerId=${partnerId}`);
   };
 
-
   const getInvoiceHTML = (order: any) => (
     <div className="content">
       <div className="container mt-4">
         <div className="card mb-3 border-0 order-mob">
           <h3 className="text-center mb-4 main-text">Invoice</h3>
           <div className="card-body-invoice">
-          <div className="card-body-invoice-inner">
+            <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Service :</h5>
-              <p className="card-text text-muted small mb-1">
-                {order?.serviceDetails}
-              </p>
+              <p className="card-text text-muted small mb-1">{order?.serviceDetails}</p>
             </div>
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Amount Paid :</h5>
@@ -114,17 +117,17 @@ const Orders = () => {
     </div>
   );
 
-  const handleDownloadOld = (order: any) => {
-    const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-9999px";
+  const handleDownload = (order: any) => {
+    const container = document.createElement('div');
+    container.style.position = 'absolute';
+    container.style.left = '-9999px';
     document.body.appendChild(container);
 
     const content = getInvoiceHTML(order);
-    const wrapper = document.createElement("div");
-    wrapper.className = "pdf-wrapper";
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pdf-wrapper';
 
-    const { render } = require("react-dom");
+    const { render } = require('react-dom');
     render(content, wrapper);
 
     container.appendChild(wrapper);
@@ -132,10 +135,10 @@ const Orders = () => {
     html2pdf()
       .set({
         margin: 0,
-        filename: "invoice.pdf",
-        image: { type: "jpeg", quality: 0.98 },
+        filename: 'invoice.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
       })
       .from(wrapper)
       .save()
@@ -144,79 +147,109 @@ const Orders = () => {
       });
   };
 
-  const handleDownload = (order: any) => {
-    // let invoiceUrl = order?.invoiceUrl;
-    console.log('ORDER', order);
-    const invoiceUrl = order?.invoiceUrl;
-    if (!invoiceUrl) return;
-    // Send to mobile app via postMessage
-    window.postMessage(
-      JSON.stringify({
-        type: 'invoiceDownload',
-        url: invoiceUrl,
-      }),
-      '*'
-    );
-  };
-
   const handleBackRoute = () => {
-    navigate(route.ordersRedirect + `?token=${token}&partnerId=${partnerId}`)
+    navigate(route.ordersRedirect + `?token=${token}&partnerId=${partnerId}`);
   };
-
-
 
   useEffect(() => {
-    fetchOrders()
-  }, [tab])
+    fetchOrders();
+  }, [tab]);
 
   return (
     <div className="content">
       <div className="container mt-4">
         <div className="left-icon">
-          <FaAngleLeft onClick={() => handleBackRoute()} />
-
+          <FaAngleLeft onClick={handleBackRoute} />
           <h3 className="text-center mb-4 main-text">Orders</h3>
         </div>
-        {/* Tabs */}
 
         <div className="d-flex bg-white p-3 justify-content-center mb-3 active-history-button position-sticky top-0 z-3 ">
-          <button onClick={() => setTab("active")} className={(tab == "active") ? "btn btn-outline-primary active-button" : "btn btn-outline-primary history-button"}>Active </button>
-          <button onClick={() => setTab("history")} className={(tab != "active") ? "btn btn-primary active-button" : "btn btn-outline-primary history-button"}>History</button>
+          <button
+            onClick={() => setTab('active')}
+            className={
+              tab === 'active'
+                ? 'btn btn-outline-primary active-button'
+                : 'btn btn-outline-primary history-button'
+            }
+          >
+            Active
+          </button>
+          <button
+            onClick={() => setTab('history')}
+            className={
+              tab !== 'active'
+                ? 'btn btn-primary active-button'
+                : 'btn btn-outline-primary history-button'
+            }
+          >
+            History
+          </button>
         </div>
 
-        {/* Orders List */}
-        <div className='row'>
-          {orders.map((order: any, index: any) => (
-            <div className='col-lg-4 col-md-6'>
-              <div key={index} className="card mb-3 shadow-sm border-0 order-mob">
-                <div onClick={() => handleOrderDetail(order?._id)} className="card-header d-flex justify-content-between align-items-center bg-light">
-                  <span className="fw-bold">{formatDate(order?.deliveryDate)}</span>
-                  <span className="text-muted small">{order?.pickupTime}</span>
-                </div>
-                <div className="card-body mobile-p-0">
-                  <div onClick={() => handleOrderDetail(order?._id)}>
+        {loading ? (
+          <div className="text-center my-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="text-center text-muted my-5">
+            <h3  style={{ textAlign: 'center', color: '#888' }}>No orders found.</h3>
+          </div>
+        ) : (
+          <div className="row">
+            {orders.map((order: any, index: any) => (
+              <div className="col-lg-4 col-md-6" key={index}>
+                <div className="card mb-3 shadow-sm border-0 order-mob">
                   <div
-                    className="card-body-inner-top">
-                    <h5 className="card-title mb-2"> {order?.serviceDetails}</h5>
-                    <p className="card-text text-muted small mb-1">Order ID: {order?.orderId}</p>
+                    onClick={() => handleOrderDetail(order?._id)}
+                    className="card-header d-flex justify-content-between align-items-center bg-light"
+                  >
+                    <span className="fw-bold">{formatDate(order?.deliveryDate)}</span>
+                    <span className="text-muted small">{order?.pickupTime}</span>
                   </div>
-                  <p className="card-text card-text-2 text-muted small mb-1">{order?.customerAddresses?.address} {order?.customerAddresses?.city} {order?.customerAddresses?.city} {order?.customerAddresses?.state} {order?.customerAddresses?.county}</p>
-                  <p className="card-text card-text-3 fw-bold mb-2">{order.amount} <span className="text-muted small">(Paid with {order.paymentType})</span></p>
-                  </div>
-                  <div className="delivery-download-button">
-                    <span className="delivery-button badge bg-primary">
-                      <img src="/assets/img/delivery-icon.png" alt="" />
-                      {order.status}</span>
-                    <span onClick={() => handleDownload(order)} className="download-button bg-primary"><MdOutlineFileDownload /> Download Invoice</span>
+                  <div className="card-body mobile-p-0">
+                    <div onClick={() => handleOrderDetail(order?._id)}>
+                      <div className="card-body-inner-top">
+                        <h5 className="card-title mb-2">{order?.serviceDetails}</h5>
+                        <p className="card-text text-muted small mb-1">
+                          Order ID: {order?.orderId}
+                        </p>
+                      </div>
+                      <p className="card-text card-text-2 text-muted small mb-1">
+                        {order?.customerAddresses?.address}{' '}
+                        {order?.customerAddresses?.city}{' '}
+                        {order?.customerAddresses?.state}{' '}
+                        {order?.customerAddresses?.county}
+                      </p>
+                      <p className="card-text card-text-3 fw-bold mb-2">
+                        {order.amount}{' '}
+                        <span className="text-muted small">
+                          (Paid with {order.paymentType})
+                        </span>
+                      </p>
+                    </div>
+                    <div className="delivery-download-button">
+                      <span className="delivery-button badge bg-primary">
+                        <img src="/assets/img/delivery-icon.png" alt="" />
+                        {order.status}
+                      </span>
+                      <span
+                        onClick={() => handleDownload(order)}
+                        className="download-button bg-primary"
+                      >
+                        <MdOutlineFileDownload /> Download Invoice
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Orders
+export default Orders;
