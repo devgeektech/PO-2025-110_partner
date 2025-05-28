@@ -33,8 +33,8 @@ export default function AddServicesTabContent() {
   const route = all_routes;
 
   const [categoryDetail, setCategoryDetail] =
-    useState<CategoryDetailType | null>(null);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const [status, setStatus] = useState("Active");
 
   const isEditMode = Boolean(id);
@@ -48,14 +48,15 @@ export default function AddServicesTabContent() {
 
   const addServiceSchema = Yup.object().shape({
     serviceName: Yup.string().required("Service name is required"),
-    description: Yup.string(),
+    description: Yup.string().min(10, "Description must be at least 10 characters")
+    .max(300, "Description cannot exceed 300 characters"),
     image: Yup.mixed().when([], {
       is: () => !isEditMode,
       then: (schema) => schema.required("Icon is required"),
     }),
   });
 
-  const formik = useFormik({
+  const formik:any = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: addServiceSchema,
@@ -170,10 +171,10 @@ export default function AddServicesTabContent() {
 
           {/* Upload Image */}
           <Form.Group className="mb-3">
-            <Form.Label>
+          {!(selectedImage || categoryDetail?.photo) && <Form.Label>
               {isEditMode ? "Update Service Icon" : "Add Service Icon"}
-            </Form.Label>
-            <div className="uploadBox text-center p-4 border border-light rounded position-relative">
+            </Form.Label> }
+            {!(selectedImage || categoryDetail?.photo) && <div className="uploadBox text-center p-4 border border-light rounded position-relative">
               <Form.Control
                 type="file"
                 accept="image/*"
@@ -185,14 +186,15 @@ export default function AddServicesTabContent() {
                 htmlFor="upload-image"
                 className="uploadLabel blue-label cursor-pointer"
               >
-                {!selectedImage && !categoryDetail?.photo && (
+                {!selectedImage && (
                   <CiCirclePlus size={32} />
                 )}
                 {selectedImage?.name || categoryDetail?.photo || "Upload Icon"}
               </label>
 
-              {/* Image Preview */}
-              {(selectedImage || categoryDetail?.photo) && (
+            </div> }
+             {/* Image Preview */}
+             {(selectedImage || categoryDetail?.photo) && (
                 <div className="image-preview mt-3 position-relative d-inline-block">
                   <img
                     src={
@@ -207,10 +209,14 @@ export default function AddServicesTabContent() {
                     style={{ maxWidth: "150px", maxHeight: "150px" }}
                   />
                   {/* Cross Icon to Remove */}
-                  {selectedImage && (
+                  {(selectedImage || categoryDetail?.photo) && (
                     <span
                       className="remove-image"
                       onClick={() => {
+
+                        let data = categoryDetail;
+                        setCategoryDetail({...data, photo:null})
+
                         setSelectedImage(null);
                         formik.setFieldValue("image", "");
                       }}
@@ -235,7 +241,6 @@ export default function AddServicesTabContent() {
                   )}
                 </div>
               )}
-            </div>
             {formik.touched.image && formik.errors.image && (
               <div className="text-danger mt-1">{formik.errors.image}</div>
             )}
