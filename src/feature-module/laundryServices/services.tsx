@@ -101,7 +101,7 @@ export default function CategoriesList() {
 
   useEffect(() => {
     fetchServices();
-    const socket = io(process.env.REACT_APP_SOCKET_URL , {
+    const socket = io(process.env.REACT_APP_SOCKET_URL, {
       transports: ['websocket'],
     });
 
@@ -109,13 +109,13 @@ export default function CategoriesList() {
       console.log('Connected to WebSocket:', socket.id);
     });
 
-    socket.on("service", (data: any) => {      
+    socket.on("service", (data: any) => {
       console.log("socket is wokring >>>", data)
-      if(data.partnerId == partnerId) {
+      if (data.partnerId == partnerId) {
         fetchServices();
       }
     });
-    
+
     return () => {
       socket.disconnect();
     };
@@ -209,7 +209,7 @@ export default function CategoriesList() {
               onClick={() => handleEditClick(cat)}
             >
               <img
-                src={process.env.REACT_APP_IMAGE_URL + cat.photo}
+                src={(cat?.iconDetail?.imageUrl) ? (process.env.REACT_APP_IMAGE_URL + cat?.iconDetail?.imageUrl) : (cat.photo) ? (process.env.REACT_APP_IMAGE_URL + cat.photo) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"}
                 alt={cat.name}
                 style={{
                   width: "50px",

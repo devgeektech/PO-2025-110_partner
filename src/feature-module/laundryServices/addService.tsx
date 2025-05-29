@@ -9,6 +9,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import {
   addCategory,
   getCategoryDetail,
+  getCategoryIcons,
   updateCategory,
 } from "../../services/categories";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -32,11 +33,10 @@ export default function AddServicesTabContent() {
   const navigate = useNavigate();
   const route = all_routes;
 
-  const [categoryDetail, setCategoryDetail] =
-    useState<any>(null);
+  const [categoryDetail, setCategoryDetail] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [status, setStatus] = useState("Active");
-
+  const [iconsList, setIconList] = useState([]);
   const isEditMode = Boolean(id);
 
   const initialValues = {
@@ -48,50 +48,57 @@ export default function AddServicesTabContent() {
 
   const addServiceSchema = Yup.object().shape({
     serviceName: Yup.string().required("Service name is required"),
-    description: Yup.string().min(10, "Description must be at least 10 characters")
-    .max(300, "Description cannot exceed 300 characters"),
+    description: Yup.string()
+      .min(10, "Description must be at least 10 characters")
+      .max(300, "Description cannot exceed 300 characters"),
     image: Yup.mixed().when([], {
       is: () => !isEditMode,
       then: (schema) => schema.required("Icon is required"),
     }),
   });
 
-  const formik:any = useFormik({
+  const formik: any = useFormik({
     initialValues,
     enableReinitialize: true,
     validationSchema: addServiceSchema,
     onSubmit: async (values, { resetForm }) => {
       try {
+        console.log('values==>>',values);
+        
         const payload: any = {
           ...values,
           status,
         };
-
         const formData = new FormData();
         for (const key in payload) {
-          if (key !== "image") {
-            formData.append(key, payload[key]);
-          }
+          formData.append(key, payload[key]);
         }
+        // const formData = new FormData();
+        // for (const key in payload) {
+        //   if (key !== "image") {
+        //     formData.append(key, payload[key]);
+        //   }
+        // }
 
-        if (payload.image instanceof File) {
-          formData.append("image", payload.image);
-        }
+        // if (typeof payload.image === "string") {
+        //   formData.append("iconId", payload.image);
+        // } else if (payload.image instanceof File) {
+        //   formData.append("image", payload.image);
+        // }
 
-        if (id) {
-          const result = await updateCategory(formData, id);
-          navigateToListing(result);
-        } else {
-          const result = await addCategory(formData);
-          navigateToListing(result);
-        }
+        const result = id
+          ? await updateCategory(formData, id)
+          : await addCategory(payload);
 
-        let message = "Service added successfully and is pending admin approval. Please enable the service once approved"
-        if(id) message = "Service updated successfully"
+        let message = id
+          ? "Service updated successfully"
+          : "Service added successfully and is pending admin approval. Please enable the service once approved";
+
         toast.success(message, { autoClose: 5000 });
         resetForm();
         setSelectedImage(null);
         setStatus("Active");
+        navigateToListing(result);
       } catch (error: any) {
         console.log(error, ">>> error");
         toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
@@ -127,11 +134,25 @@ export default function AddServicesTabContent() {
     }
   };
 
+  const fetchIcons = async () => {
+    try {
+      const result = await getCategoryIcons();
+      if (result.data.data) {
+        setIconList(result.data.data);
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.responseMessage, { autoClose: 5000 });
+      }
+    }
+  };
+
   const handleBackRoute = () => {
     navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
   };
 
   useEffect(() => {
+    fetchIcons();
     if (id) {
       fetchDetails(id);
     }
@@ -171,12 +192,48 @@ export default function AddServicesTabContent() {
             )}
           </Form.Group>
 
-          {/* Upload Image */}
+          {/* Select Icon from List */}
           <Form.Group className="mb-3">
-          {!(selectedImage || categoryDetail?.photo) && <Form.Label>
-              {isEditMode ? "Update Service Icon" : "Add Service Icon"}
-            </Form.Label> }
-            {!(selectedImage || categoryDetail?.photo) && <div className="uploadBox text-center p-4 border border-light rounded position-relative">
+            <Form.Label>Select Icon</Form.Label>
+            <div className="d-flex flex-wrap gap-3">
+              {iconsList.map((icon: any) => {
+                const fullUrl = `${process.env.REACT_APP_IMAGE_URL}${icon.imageUrl}`;
+                const isSelected = formik.values.image === icon._id;
+
+                return (
+                  <div
+                    key={icon._id}
+                    className={`icon-select-wrapper ${isSelected ? "selected" : ""}`}
+                    onClick={() => {
+                      formik.setFieldValue("image", icon._id);
+                      setSelectedImage(null);
+                    }}
+                    style={{
+                      border: isSelected ? "2px solid #007bff" : "1px solid #ccc",
+                      padding: "6px",
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <img
+                      src={fullUrl}
+                      alt="Service Icon"
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </Form.Group>
+
+          {/* Upload Image */}
+          {/* <Form.Group className="mb-3">
+            <Form.Label>Or Upload New Icon</Form.Label>
+            <div className="uploadBox text-center p-4 border border-light rounded position-relative">
               <Form.Control
                 type="file"
                 accept="image/*"
@@ -188,65 +245,49 @@ export default function AddServicesTabContent() {
                 htmlFor="upload-image"
                 className="uploadLabel blue-label cursor-pointer"
               >
-                {!selectedImage && (
-                  <CiCirclePlus size={32} />
-                )}
-                {selectedImage?.name || categoryDetail?.photo || "Upload Icon"}
+                <CiCirclePlus size={32} />
+                {selectedImage?.name || "Upload Icon"}
               </label>
+            </div>
 
-            </div> }
-             {/* Image Preview */}
-             {(selectedImage || categoryDetail?.photo) && (
-                <div className="image-preview mt-3 position-relative d-inline-block">
-                  <img
-                    src={
-                      selectedImage
-                        ? URL.createObjectURL(selectedImage)
-                        : categoryDetail?.photo
-                          ? `${process.env.REACT_APP_IMAGE_URL}${categoryDetail.photo}`
-                          : ""
-                    }
-                    alt="Preview"
-                    className="img-thumbnail"
-                    style={{ maxWidth: "150px", maxHeight: "150px" }}
-                  />
-                  {/* Cross Icon to Remove */}
-                  {(selectedImage || categoryDetail?.photo) && (
-                    <span
-                      className="remove-image"
-                      onClick={() => {
-
-                        let data = categoryDetail;
-                        setCategoryDetail({...data, photo:null})
-
-                        setSelectedImage(null);
-                        formik.setFieldValue("image", "");
-                      }}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        background: "#fff",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                        width: "24px",
-                        height: "24px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "1px solid #ccc",
-                        transform: "translate(50%, -50%)",
-                      }}
-                    >
-                      ×
-                    </span>
-                  )}
-                </div>
-              )}
+            {selectedImage && (
+              <div className="image-preview mt-3 position-relative d-inline-block">
+                <img
+                  src={URL.createObjectURL(selectedImage)}
+                  alt="Preview"
+                  className="img-thumbnail"
+                  style={{ maxWidth: "150px", maxHeight: "150px" }}
+                />
+                <span
+                  className="remove-image"
+                  onClick={() => {
+                    setSelectedImage(null);
+                    formik.setFieldValue("image", "");
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    background: "#fff",
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                    width: "24px",
+                    height: "24px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #ccc",
+                    transform: "translate(50%, -50%)",
+                  }}
+                >
+                  ×
+                </span>
+              </div>
+            )}
             {formik.touched.image && formik.errors.image && (
               <div className="text-danger mt-1">{formik.errors.image}</div>
             )}
-          </Form.Group>
+          </Form.Group> */}
 
           {/* Description */}
           <Form.Group className="mb-3">
@@ -259,14 +300,14 @@ export default function AddServicesTabContent() {
               {...formik.getFieldProps("description")}
               className={clsx("commonInput", {
                 "border border-danger":
-                  formik.touched.description && formik.touched.description,
+                  formik.touched.description && formik.errors.description,
               })}
             />
-           {formik.touched.description && formik.errors.description && (
-            <div className="text-danger mt-1">
-              {formik.errors.description}
-            </div>
-          )}
+            {formik.touched.description && formik.errors.description && (
+              <div className="text-danger mt-1">
+                {formik.errors.description}
+              </div>
+            )}
           </Form.Group>
 
           {/* Status */}

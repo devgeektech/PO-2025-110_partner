@@ -47,3 +47,12 @@ export const updateCategory = async (payload: any,id:any) => {
         },
       });
 }
+
+export const getCategoryIcons = async () => {
+    const myToken = getStorageItem("token");
+    return http.get(`/admin/category/icons`, {
+        headers: {
+            Authorization: `${myToken}`
+        }
+    });
+}
