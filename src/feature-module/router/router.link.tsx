@@ -65,6 +65,11 @@ const publicRoutes = [
     element: <AddServicesTabContent />,
     route: Route
   },
+  {
+    path: routes.invioceDownloadRedirect,
+    element: <BackPage />,
+    route: Route
+  },
 ];
 
 const withoutHeaderRoutes = [

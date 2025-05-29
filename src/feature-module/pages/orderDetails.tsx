@@ -131,7 +131,7 @@ const OrderDetails = () => {
 
             </div>
             <div className="delivery-download-button delivery-download-button-2">
-              <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status}>
+              <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status} disabled={status === "Completed"} >
                 <option>Select menu</option>
                 <option value="Order placed">Order placed</option>
                 <option value="On the way">On the way</option>

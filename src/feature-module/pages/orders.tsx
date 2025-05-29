@@ -173,21 +173,25 @@ const Orders = () => {
   const handleDownload = (order: any) => {
     console.log('ORDER', order);
   
-    const invoiceUrl = order?.invoiceUrl;
+    const invoiceUrl = order?.invoiceUrl    ;
     if (!invoiceUrl) return;
+
+    let path = route.invioceDownloadRedirect.replace(":url", invoiceUrl);
+
+    console.log(path,">>> path")
+    navigate(`${path}`)
+    // const message = JSON.stringify({
+    //   type: 'invoiceDownload',
+    //   url: invoiceUrl,
+    // });
   
-    const message = JSON.stringify({
-      type: 'invoiceDownload',
-      url: invoiceUrl,
-    });
-  
-    if (window.Print?.postMessage) {
-      window.Print.postMessage(message); // Used in mobile WebView
-    } else {
-      console.warn('Print.postMessage is not available. Falling back or ignoring.');
+    // if (window.Print?.postMessage) {
+    //   window.Print.postMessage(message); // Used in mobile WebView
+    // } else {
+    //   console.warn('Print.postMessage is not available. Falling back or ignoring.');
       // Optional: handle fallback logic here, like showing a message
       // window.postMessage(message, '*');
-    }
+    // }
   };  
 
   const handleBackRoute = () => {
@@ -294,12 +298,12 @@ const Orders = () => {
                         <img src="/assets/img/delivery-icon.png" alt="" />
                         {order.status}
                       </span>
-                      <span
+                      {tab ==  "history" && <span
                         onClick={() => handleDownload(order)}
                         className="download-button bg-primary"
                       >
                         <MdOutlineFileDownload /> Download Invoice
-                      </span>
+                      </span>}
                     </div>
                   </div>
                 </div>
