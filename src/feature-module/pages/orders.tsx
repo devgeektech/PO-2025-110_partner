@@ -9,7 +9,13 @@ import { AxiosError } from "axios";
 import html2pdf from "html2pdf.js";
 import { all_routes } from "../router/all_routes";
 import { io } from "socket.io-client";
-
+declare global {
+  interface Window {
+    invoiceDownload?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}
 declare global {
   interface Window {
     Print?: {
@@ -179,7 +185,18 @@ const Orders = () => {
     let path = route.invioceDownloadRedirect.replace(":url", invoiceUrl);
 
     console.log(path,">>> path")
-    navigate(`${path}`)
+  
+    if (window?.invoiceDownload?.postMessage) {
+      window.invoiceDownload.postMessage(
+        JSON.stringify({
+          type: "DOWNLOAD_INVOICE",
+          url: order.invoiceUrl,
+        })
+      );
+    } else {
+      console.warn("invoiceDownload not available");
+    }
+    // navigate(`${path}`)
     // const message = JSON.stringify({
     //   type: 'invoiceDownload',
     //   url: invoiceUrl,
