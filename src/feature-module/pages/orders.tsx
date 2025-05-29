@@ -10,6 +10,14 @@ import html2pdf from "html2pdf.js";
 import { all_routes } from "../router/all_routes";
 import { io } from "socket.io-client";
 
+declare global {
+  interface Window {
+    Print?: {
+      postMessage: (message: string) => void;
+    };
+  }
+}
+
 const Orders = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -132,7 +140,7 @@ const Orders = () => {
     </div>
   );
 
-  const handleDownload = (order: any) => {
+  const handleDownloadOld = (order: any) => {
     const container = document.createElement("div");
     container.style.position = "absolute";
     container.style.left = "-9999px";
@@ -161,6 +169,26 @@ const Orders = () => {
         document.body.removeChild(container);
       });
   };
+
+  const handleDownload = (order: any) => {
+    console.log('ORDER', order);
+  
+    const invoiceUrl = order?.invoiceUrl;
+    if (!invoiceUrl) return;
+  
+    const message = JSON.stringify({
+      type: 'invoiceDownload',
+      url: invoiceUrl,
+    });
+  
+    if (window.Print?.postMessage) {
+      window.Print.postMessage(message); // Used in mobile WebView
+    } else {
+      console.warn('Print.postMessage is not available. Falling back or ignoring.');
+      // Optional: handle fallback logic here, like showing a message
+      // window.postMessage(message, '*');
+    }
+  };  
 
   const handleBackRoute = () => {
     navigate(route.ordersRedirect + `?token=${token}&partnerId=${partnerId}`);
