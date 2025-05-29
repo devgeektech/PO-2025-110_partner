@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { all_routes } from "../router/all_routes";
-
+import { io } from 'socket.io-client'
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -101,6 +101,24 @@ export default function CategoriesList() {
 
   useEffect(() => {
     fetchServices();
+    const socket = io(process.env.REACT_APP_SOCKET_URL , {
+      transports: ['websocket'],
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket:', socket.id);
+    });
+
+    socket.on("service", (data: any) => {      
+      console.log("socket is wokring >>>", data)
+      if(data.partnerId == partnerId) {
+        fetchServices();
+      }
+    });
+    
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
