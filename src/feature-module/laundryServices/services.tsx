@@ -209,7 +209,7 @@ export default function CategoriesList() {
               onClick={() => handleEditClick(cat)}
             >
               <img
-                src={(cat?.iconDetail?.imageUrl) ? (process.env.REACT_APP_IMAGE_URL + cat?.iconDetail?.imageUrl) : (cat.photo) ? (process.env.REACT_APP_IMAGE_URL + cat.photo) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"}
+                src={(cat.photo) ? (process.env.REACT_APP_IMAGE_URL + cat.photo) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"}
                 alt={cat.name}
                 style={{
                   width: "50px",

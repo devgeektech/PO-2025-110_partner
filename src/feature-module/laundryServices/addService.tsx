@@ -42,7 +42,8 @@ export default function AddServicesTabContent() {
   const initialValues = {
     serviceName: categoryDetail?.name || "",
     description: categoryDetail?.description || "",
-    image: categoryDetail?.photo || "",
+    photo: categoryDetail?.photo || "",
+    icon: categoryDetail?.icon || "",
     status: categoryDetail?.status || "Active",
   };
 
@@ -51,7 +52,7 @@ export default function AddServicesTabContent() {
     description: Yup.string()
       .min(10, "Description must be at least 10 characters")
       .max(300, "Description cannot exceed 300 characters"),
-    image: Yup.mixed().when([], {
+      photo: Yup.mixed().when([], {
       is: () => !isEditMode,
       then: (schema) => schema.required("Icon is required"),
     }),
@@ -106,14 +107,6 @@ export default function AddServicesTabContent() {
     },
   });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      formik.setFieldValue("image", file);
-    }
-  };
-
   const navigateToListing = (res: any) => {
     if (res?.status === 200) {
       navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
@@ -151,6 +144,12 @@ export default function AddServicesTabContent() {
     navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
   };
 
+  const handleSelectimg = (icon:any) => {
+    formik.setFieldValue("icon", icon._id);
+    formik.setFieldValue("photo", icon.imageUrl);
+    setSelectedImage(null);
+  };
+
   useEffect(() => {
     fetchIcons();
     if (id) {
@@ -173,7 +172,6 @@ export default function AddServicesTabContent() {
           </h3>
         </div>
         <Form onSubmit={formik.handleSubmit}>
-          {/* Service Name */}
           <Form.Group className="mb-3">
             <Form.Label>Service Name</Form.Label>
             <Form.Control
@@ -198,16 +196,13 @@ export default function AddServicesTabContent() {
             <div className="d-flex flex-wrap gap-3">
               {iconsList.map((icon: any) => {
                 const fullUrl = `${process.env.REACT_APP_IMAGE_URL}${icon.imageUrl}`;
-                const isSelected = formik.values.image === icon._id;
+                const isSelected = formik.values.icon === icon._id;
 
                 return (
                   <div
                     key={icon._id}
                     className={`icon-select-wrapper ${isSelected ? "selected" : ""}`}
-                    onClick={() => {
-                      formik.setFieldValue("image", icon._id);
-                      setSelectedImage(null);
-                    }}
+                    onClick={()=>handleSelectimg(icon)}
                     style={{
                       border: isSelected ? "2px solid #007bff" : "1px solid #ccc",
                       padding: "6px",
@@ -229,65 +224,6 @@ export default function AddServicesTabContent() {
               })}
             </div>
           </Form.Group>
-
-          {/* Upload Image */}
-          {/* <Form.Group className="mb-3">
-            <Form.Label>Or Upload New Icon</Form.Label>
-            <div className="uploadBox text-center p-4 border border-light rounded position-relative">
-              <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="d-none"
-                id="upload-image"
-              />
-              <label
-                htmlFor="upload-image"
-                className="uploadLabel blue-label cursor-pointer"
-              >
-                <CiCirclePlus size={32} />
-                {selectedImage?.name || "Upload Icon"}
-              </label>
-            </div>
-
-            {selectedImage && (
-              <div className="image-preview mt-3 position-relative d-inline-block">
-                <img
-                  src={URL.createObjectURL(selectedImage)}
-                  alt="Preview"
-                  className="img-thumbnail"
-                  style={{ maxWidth: "150px", maxHeight: "150px" }}
-                />
-                <span
-                  className="remove-image"
-                  onClick={() => {
-                    setSelectedImage(null);
-                    formik.setFieldValue("image", "");
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    background: "#fff",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                    width: "24px",
-                    height: "24px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "1px solid #ccc",
-                    transform: "translate(50%, -50%)",
-                  }}
-                >
-                  ×
-                </span>
-              </div>
-            )}
-            {formik.touched.image && formik.errors.image && (
-              <div className="text-danger mt-1">{formik.errors.image}</div>
-            )}
-          </Form.Group> */}
 
           {/* Description */}
           <Form.Group className="mb-3">
