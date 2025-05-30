@@ -63,9 +63,7 @@ export default function AddServicesTabContent() {
     enableReinitialize: true,
     validationSchema: addServiceSchema,
     onSubmit: async (values, { resetForm }) => {
-      try {
-        console.log('values==>>',values);
-        
+      try {        
         const payload: any = {
           ...values,
           status,
@@ -74,18 +72,6 @@ export default function AddServicesTabContent() {
         for (const key in payload) {
           formData.append(key, payload[key]);
         }
-        // const formData = new FormData();
-        // for (const key in payload) {
-        //   if (key !== "image") {
-        //     formData.append(key, payload[key]);
-        //   }
-        // }
-
-        // if (typeof payload.image === "string") {
-        //   formData.append("iconId", payload.image);
-        // } else if (payload.image instanceof File) {
-        //   formData.append("image", payload.image);
-        // }
 
         const result = id
           ? await updateCategory(formData, id)
@@ -93,7 +79,7 @@ export default function AddServicesTabContent() {
 
         let message = id
           ? "Service updated successfully"
-          : "Service added successfully and is pending admin approval. Please enable the service once approved";
+          : "Service added successfully and is pending admin approval.";
 
         toast.success(message, { autoClose: 5000 });
         resetForm();
