@@ -20,5 +20,6 @@ export const all_routes = {
   servicesRedirect:"/services/redirect",
   invoiceRedirect:"/invoice/redirect",
   ordersRedirect:"/orders/redirect",
+  invioceDownloadRedirect: "/orders/invoice/:url",
   orderserviceRedirect:"orderservice/redirect",
 };
