@@ -52,7 +52,7 @@ export default function AddServicesTabContent() {
     description: Yup.string()
       .min(10, "Description must be at least 10 characters")
       .max(300, "Description cannot exceed 300 characters"),
-      photo: Yup.mixed().when([], {
+    photo: Yup.mixed().when([], {
       is: () => !isEditMode,
       then: (schema) => schema.required("Icon is required"),
     }),
@@ -63,7 +63,7 @@ export default function AddServicesTabContent() {
     enableReinitialize: true,
     validationSchema: addServiceSchema,
     onSubmit: async (values, { resetForm }) => {
-      try {        
+      try {
         const payload: any = {
           ...values,
           status,
@@ -130,7 +130,7 @@ export default function AddServicesTabContent() {
     navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
   };
 
-  const handleSelectimg = (icon:any) => {
+  const handleSelectimg = (icon: any) => {
     formik.setFieldValue("icon", icon._id);
     formik.setFieldValue("photo", icon.imageUrl);
     setSelectedImage(null);
@@ -179,36 +179,42 @@ export default function AddServicesTabContent() {
           {/* Select Icon from List */}
           <Form.Group className="mb-3">
             <Form.Label>Select Icon</Form.Label>
-            <div className="d-flex flex-wrap gap-3">
-              {iconsList.map((icon: any) => {
-                const fullUrl = `${process.env.REACT_APP_IMAGE_URL}${icon.imageUrl}`;
-                const isSelected = formik.values.icon === icon._id;
+            {iconsList.length === 0 ? (
+              <div className="text-danger small mt-1">
+                No icons available. Only icons added by the partner are visible here. Please upload an icon first to proceed.
+              </div>
+            ) : (
+              <div className="d-flex flex-wrap gap-3">
+                {iconsList.map((icon: any) => {
+                  const fullUrl = `${process.env.REACT_APP_IMAGE_URL}${icon.imageUrl}`;
+                  const isSelected = formik.values.icon === icon._id;
 
-                return (
-                  <div
-                    key={icon._id}
-                    className={`icon-select-wrapper ${isSelected ? "selected" : ""}`}
-                    onClick={()=>handleSelectimg(icon)}
-                    style={{
-                      border: isSelected ? "2px solid #007bff" : "1px solid #ccc",
-                      padding: "6px",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <img
-                      src={fullUrl}
-                      alt="Service Icon"
+                  return (
+                    <div
+                      key={icon._id}
+                      className={`icon-select-wrapper ${isSelected ? "selected" : ""}`}
+                      onClick={() => handleSelectimg(icon)}
                       style={{
-                        width: "60px",
-                        height: "60px",
-                        objectFit: "contain",
+                        border: isSelected ? "2px solid #007bff" : "1px solid #ccc",
+                        padding: "6px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
                       }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
+                    >
+                      <img
+                        src={fullUrl}
+                        alt="Service Icon"
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "contain",
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </Form.Group>
 
           {/* Description */}
