@@ -1,7 +1,7 @@
 {
   "name": "dreamsports",
   "version": "0.1.0",
-  "homepage": "https://partner.peakup25.com",
+  "homepage": "/",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
