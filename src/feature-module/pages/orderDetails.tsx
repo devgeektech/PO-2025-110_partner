@@ -134,10 +134,10 @@ const OrderDetails = () => {
               <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status} disabled={status === "Completed"} >
                 <option>Select menu</option>
                 <option value="Order placed">Order placed</option>
-                {/* <option value="On the way">On the way</option> */}
+                <option value="On the way">On the way</option>
                 <option value="In process">In process</option>
                 <option value="Laundry is cleaned">Laundry is cleaned</option>
-                {/* <option value="Completed">Completed</option> */}
+                <option value="Completed">Completed</option>
               </Form.Select>
               {/* <span className="Order-id-98"> Order ID: {order.orderId}</span> */}
             </div>
