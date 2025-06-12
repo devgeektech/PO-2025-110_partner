@@ -150,9 +150,9 @@ export default function AddServicesTabContent() {
     <div className="accountSettingTab">
       <div className="personalIformation bgFormColor p-4 formEditWrap mb-3">
         <div className="service-heading mb-2">
-          <div className="left-icon">
+          {/* <div className="left-icon">
             <FaAngleLeft onClick={() => handleBackRoute()} />
-          </div>
+          </div> */}
           <h3 className="mb-3 text-center">
             {isEditMode ? "Edit Service" : "Add Service"}
           </h3>
