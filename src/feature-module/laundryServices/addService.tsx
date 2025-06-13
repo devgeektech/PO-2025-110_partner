@@ -97,7 +97,8 @@ export default function AddServicesTabContent() {
     if (res?.status === 200) {
       let link = route.services + `?token=${token}&partnerId=${partnerId}`;
       console.log(link,">>>> link")
-      navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
+      // navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
+      window.location.href = `${route.services}?token=${token}&partnerId=${partnerId}`;
     }
   };
 
