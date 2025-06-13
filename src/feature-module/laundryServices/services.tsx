@@ -197,56 +197,59 @@ export default function CategoriesList() {
         ) : (
           categories.map((cat: any) => (
             <Card
-              key={cat._id}
+            key={cat._id}
+            style={{
+              marginBottom: "15px",
+              padding: "15px",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "#f5f5f9",
+            }}
+            onClick={() => handleEditClick(cat)}
+          >
+            <img
+              src={
+                cat.photo
+                  ? process.env.REACT_APP_IMAGE_URL + cat.photo
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"
+              }
+              alt={cat.name}
               style={{
-                marginBottom: "15px",
-                padding: "15px",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "#f5f5f9",
+                width: "50px",
+                height: "50px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                marginRight: "15px",
               }}
-              onClick={() => handleEditClick(cat)}
-            >
-              <img
-                src={(cat.photo) ? (process.env.REACT_APP_IMAGE_URL + cat.photo) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"}
-                alt={cat.name}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  marginRight: "15px",
-                }}
-              />
-              <div style={{ flexGrow: 1 }}>
-                <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>
-                  {cat.name}
-                </h6>
-                <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
-                  {cat.description}
-                </p>
-              </div>
-              <div onClick={(e) => e.stopPropagation()}>
-                <Dropdown align="end">
-                  <Dropdown.Toggle
-                    as="button"
-                    variant="link"
-                    className="text-muted p-0 border-0 bg-transparent"
-                  >
-                    <BsThreeDotsVertical size={20} />
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => handleEditClick(cat)}>
-                      Edit
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
-                      Delete
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
-            </Card>
+            />
+            <div style={{ flexGrow: 1 }}>
+              <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>{cat.name}</h6>
+              <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
+                {cat.description}
+              </p>
+            </div>
+            <div style={{ marginRight: "15px" }}>
+              <span>{cat.status}</span>
+            </div>
+            <div onClick={(e) => e.stopPropagation()}>
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  as="button"
+                  variant="link"
+                  className="text-muted p-0 border-0 bg-transparent"
+                >
+                  <BsThreeDotsVertical size={20} />
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => handleEditClick(cat)}>Edit</Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
+                    Delete
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          </Card>
           ))
         )}
       </div>
