@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, Button, Dropdown } from "react-bootstrap";
 import { Plus } from "react-bootstrap-icons";
 import { FaAngleLeft, FaSearch } from "react-icons/fa";
@@ -9,7 +9,8 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { all_routes } from "../router/all_routes";
-import { io } from 'socket.io-client'
+import { io } from 'socket.io-client';
+
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -23,6 +24,8 @@ export default function CategoriesList() {
   const partnerId = queryParams.get("partnerId");
   const navigate = useNavigate();
   const route = all_routes;
+  const socketURL = process.env.REACT_APP_SOCKET_URL;
+  const socketRef = useRef<any>(null);
 
   const fetchServices = async () => {
     setLoading(true);
@@ -52,6 +55,14 @@ export default function CategoriesList() {
     );
   };
 
+  const titleCase = (str: any) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const handleBackRoute = () => {
     navigate(route.servicesRedirect + `?token=${token}&partnerId=${partnerId}`);
   };
@@ -67,10 +78,10 @@ export default function CategoriesList() {
     navigate(`${path}?token=${token}&partnerId=${partnerId}`);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = async (note: string) => {
     if (selectedCategory && selectedCategory._id) {
       try {
-        const result: any = await deleteCategory(selectedCategory._id);
+        const result: any = await deleteCategory(selectedCategory._id, note);
         if (result.data.responseMessage) {
           toast.success(result.data.responseMessage, { autoClose: 5000 });
           fetchServices();
@@ -84,7 +95,7 @@ export default function CategoriesList() {
       }
       setShowDeleteModal(false);
     }
-  };
+};
 
   const handleCloseModal = () => {
     setSelectedCategory(null);
@@ -100,26 +111,29 @@ export default function CategoriesList() {
   }, [searchTerm]);
 
   useEffect(() => {
-    fetchServices();
-    const socket = io(process.env.REACT_APP_SOCKET_URL, {
-      transports: ['websocket'],
-    });
+    if (!socketRef.current) {
+      socketRef.current = io(socketURL, {
+        transports: ['websocket'],
+      });
 
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket:', socket.id);
-    });
+      socketRef.current.on('connect', () => {
+        console.log('Connected to WebSocket:', socketRef.current.id);
+      });
 
-    socket.on("service", (data: any) => {
-      console.log("socket is wokring >>>", data)
-      if (data.partnerId == partnerId) {
-        fetchServices();
-      }
-    });
+      socketRef.current.on("service", (data: any) => {
+        if (data.partnerId === partnerId) {
+          fetchServices();
+        }
+      });
+    }
 
     return () => {
-      socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
     };
-  }, []);
+  }, [partnerId]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -132,8 +146,6 @@ export default function CategoriesList() {
           justifyContent: "space-between",
         }}
       >
-        {/* <FaAngleLeft style={{ fontSize: '18px', cursor: 'pointer' }} onClick={() => handleBackRoute()} /> */}
-
         <h4
           style={{
             margin: 0,
@@ -197,59 +209,65 @@ export default function CategoriesList() {
         ) : (
           categories.map((cat: any) => (
             <Card
-            key={cat._id}
-            style={{
-              marginBottom: "15px",
-              padding: "15px",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              backgroundColor: "#f5f5f9",
-            }}
-            onClick={() => handleEditClick(cat)}
-          >
-            <img
-              src={
-                cat.photo
-                  ? process.env.REACT_APP_IMAGE_URL + cat.photo
-                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"
-              }
-              alt={cat.name}
+              key={cat._id}
               style={{
-                width: "50px",
-                height: "50px",
-                objectFit: "cover",
-                borderRadius: "8px",
-                marginRight: "15px",
+                marginBottom: "15px",
+                padding: "15px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                backgroundColor: "#f5f5f9",
               }}
-            />
-            <div style={{ flexGrow: 1 }}>
-              <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>{cat.name}</h6>
-              <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
-                {cat.description}
-              </p>
-            </div>
-            <div style={{ marginRight: "15px" }}>
-              <span>{cat.status}</span>
-            </div>
-            <div onClick={(e) => e.stopPropagation()}>
-              <Dropdown align="end">
-                <Dropdown.Toggle
-                  as="button"
-                  variant="link"
-                  className="text-muted p-0 border-0 bg-transparent"
-                >
-                  <BsThreeDotsVertical size={20} />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => handleEditClick(cat)}>Edit</Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
-                    Delete
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </Card>
+              onClick={() => handleEditClick(cat)}
+            >
+              <img
+                src={
+                  cat.photo
+                    ? process.env.REACT_APP_IMAGE_URL + cat.photo
+                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYgizZqMv5a7Qo5ZXvwKCHeRsslPrArnCZ4g&s"
+                }
+                alt={cat.name}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                  marginRight: "15px",
+                }}
+              />
+              <div style={{ flexGrow: 1 }}>
+                <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>{titleCase(cat.name)}</h6>
+                <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
+                  {cat.description}
+                </p>
+              </div>
+              <div style={{ marginRight: "15px" }}>
+                <span>
+                  {!cat.isActiveByAdmin
+                    ? "Admin Approval Pending"
+                    : cat.status === "Active"
+                      ? "Active"
+                      : "Inactive"}
+                </span>
+              </div>
+              <div onClick={(e) => e.stopPropagation()}>
+                <Dropdown align="end">
+                  <Dropdown.Toggle
+                    as="button"
+                    variant="link"
+                    className="text-muted p-0 border-0 bg-transparent"
+                  >
+                    <BsThreeDotsVertical size={20} />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => handleEditClick(cat)}>Edit</Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDeleteClick(cat)}>
+                      Delete
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </Card>
           ))
         )}
       </div>
@@ -276,4 +294,4 @@ export default function CategoriesList() {
       />
     </div>
   );
-}
+}  

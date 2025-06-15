@@ -22,6 +22,8 @@ type CategoryDetailType = {
   description?: string;
   photo?: string;
   status?: string;
+  note?: string;
+  isActiveByAdmin?: boolean;
 };
 
 export default function AddServicesTabContent() {
@@ -36,6 +38,7 @@ export default function AddServicesTabContent() {
   const [categoryDetail, setCategoryDetail] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [status, setStatus] = useState("Active");
+  const [initialStatus, setInitialStatus] = useState("Active"); // Track initial status
   const [iconsList, setIconList] = useState([]);
   const isEditMode = Boolean(id);
 
@@ -45,6 +48,7 @@ export default function AddServicesTabContent() {
     photo: categoryDetail?.photo || "",
     icon: categoryDetail?.icon || "",
     status: categoryDetail?.status || "Active",
+    note: categoryDetail?.note || "",
   };
 
   const addServiceSchema = Yup.object().shape({
@@ -54,8 +58,14 @@ export default function AddServicesTabContent() {
       .max(300, "Description cannot exceed 300 characters"),
     photo: Yup.mixed().when([], {
       is: () => !isEditMode,
-      then: (schema) => schema.required("Icon is required"),
+      then: (schema) => schema.required("Please select an icon"),
     }),
+    note: Yup.string()
+      .max(500, "Note cannot exceed 500 characters")
+      .when([], {
+        is: () => isEditMode && categoryDetail?.isActiveByAdmin && status !== initialStatus,
+        then: (schema) => schema.required("Note is required when changing status"),
+      }),
   });
 
   const formik: any = useFormik({
@@ -96,8 +106,7 @@ export default function AddServicesTabContent() {
   const navigateToListing = (res: any) => {
     if (res?.status === 200) {
       let link = route.services + `?token=${token}&partnerId=${partnerId}`;
-      console.log(link,">>>> link")
-      // navigate(route.services + `?token=${token}&partnerId=${partnerId}`);
+      console.log(link, ">>>> link");
       window.location.href = `${route.services}?token=${token}&partnerId=${partnerId}`;
     }
   };
@@ -108,6 +117,7 @@ export default function AddServicesTabContent() {
       if (result.data.data) {
         setCategoryDetail(result.data.data);
         setStatus(result.data.data.status || "Active");
+        setInitialStatus(result.data.data.status || "Active"); // Set initial status
       }
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -153,9 +163,6 @@ export default function AddServicesTabContent() {
     <div className="accountSettingTab">
       <div className="personalIformation bgFormColor p-4 formEditWrap mb-3">
         <div className="service-heading mb-2">
-          {/* <div className="left-icon">
-            <FaAngleLeft onClick={() => handleBackRoute()} />
-          </div> */}
           <h3 className="mb-3 text-center">
             {isEditMode ? "Edit Service" : "Add Service"}
           </h3>
@@ -179,7 +186,6 @@ export default function AddServicesTabContent() {
             )}
           </Form.Group>
 
-          {/* Select Icon from List */}
           <Form.Group className="mb-3">
             <Form.Label>Select Icon</Form.Label>
             {iconsList.length === 0 ? (
@@ -218,9 +224,11 @@ export default function AddServicesTabContent() {
                 })}
               </div>
             )}
+            {formik.touched.photo && formik.errors.photo && (
+              <div className="text-danger mt-1">{formik.errors.photo}</div>
+            )}
           </Form.Group>
 
-          {/* Description */}
           <Form.Group className="mb-3">
             <Form.Label>Description</Form.Label>
             <Form.Control
@@ -241,35 +249,56 @@ export default function AddServicesTabContent() {
             )}
           </Form.Group>
 
-          {/* Status */}
-          <Form.Group className="mb-4">
-            <Form.Label>Status</Form.Label>
-            <div className="d-flex gap-3">
-              <Form.Check
-                type="radio"
-                id="status-active"
-                label="Active"
-                name="status"
-                value="Active"
-                checked={status === "Active"}
-                onChange={(e) => setStatus(e.target.value)}
-                className="flex-fill"
-              />
-              <Form.Check
-                type="radio"
-                id="status-inactive"
-                label="Inactive"
-                name="status"
-                value="InActive"
-                checked={status === "InActive"}
-                onChange={(e) => setStatus(e.target.value)}
-                className="flex-fill"
-              />
-            </div>
-          </Form.Group>
+          {categoryDetail && categoryDetail.isActiveByAdmin && (
+            <>
+              <Form.Group className="mb-4">
+                <Form.Label>Status</Form.Label>
+                <div className="d-flex gap-3">
+                  <Form.Check
+                    type="radio"
+                    id="status-active"
+                    label="Active"
+                    name="status"
+                    value="Active"
+                    checked={status === "Active"}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="flex-fill"
+                  />
+                  <Form.Check
+                    type="radio"
+                    id="status-inactive"
+                    label="Inactive"
+                    name="status"
+                    value="InActive"
+                    checked={status === "InActive"}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="flex-fill"
+                  />
+                </div>
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Label>Notes</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  name="note"
+                  rows={3}
+                  placeholder="Add notes"
+                  {...formik.getFieldProps("note")}
+                  className={clsx("commonInput", {
+                    "border border-danger":
+                      formik.touched.note && formik.errors.note,
+                  })}
+                />
+                {formik.touched.note && formik.errors.note && (
+                  <div className="text-danger mt-1">{formik.errors.note}</div>
+                )}
+              </Form.Group>
+            </>
+          )}
 
           <Button type="submit" className="w-100 gradientButton">
-            {isEditMode ? "Update Service" : "Add Service"}
+            {categoryDetail ? "Update Service" : "Add Service"}
           </Button>
         </Form>
       </div>

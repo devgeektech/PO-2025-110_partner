@@ -20,11 +20,24 @@ export const getCategories = async (id: any,search:any) => {
     });
 }
 
-export const deleteCategory = async (id: any) => {
+// export const deleteCategory = async (id: any) => {
+//     const myToken = getStorageItem("token");
+//     return http.delete(`/category/${id}`, {
+//         headers: {
+//             Authorization: `${myToken}`
+//         }
+//     });
+// }
+
+
+export const deleteCategory = async (id: any, note: string) => {
     const myToken = getStorageItem("token");
     return http.delete(`/category/${id}`, {
         headers: {
             Authorization: `${myToken}`
+        },
+        data: {
+            note
         }
     });
 }
