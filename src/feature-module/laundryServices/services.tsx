@@ -24,7 +24,7 @@ export default function CategoriesList() {
   const partnerId = queryParams.get("partnerId");
   const navigate = useNavigate();
   const route = all_routes;
-  const socketURL = process.env.REACT_APP_SOCKET_URL;
+  const socketURL = process.env.REACT_APP_SOCKET_URL || 'https://api.peakup25.com';
   const socketRef = useRef<any>(null);
 
   const fetchServices = async () => {
