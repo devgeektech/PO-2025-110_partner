@@ -9,4 +9,4 @@ export const MIME_TYPE_MAP:Record<string, string> = {
     mov: 'video/quicktime',
 };
 
-export const SOCKET_ENDPOINT = "http://13.215.239.139:9000"
+export const SOCKET_ENDPOINT = "https://api.peakup25.com"
