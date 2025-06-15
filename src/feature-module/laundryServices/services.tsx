@@ -9,12 +9,11 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { all_routes } from "../router/all_routes";
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { setCategoryList } from "../../core/data/redux/user/userSlice";
 
 export default function CategoriesList() {
-  const [categories, setCategories] = useState<any[]>([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [showSearchInput, setShowSearchInput] = useState(false);
@@ -26,12 +25,11 @@ export default function CategoriesList() {
   const partnerId = queryParams.get("partnerId");
   const navigate = useNavigate();
   const route = all_routes;
-  const socketURL = process.env.REACT_APP_SOCKET_URL || 'https://api.peakup25.com';
+  const socketURL = process.env.REACT_APP_SOCKET_URL || "https://api.peakup25.com";
   const socketRef = useRef<any>(null);
-  const dispatch:any = useDispatch();
-    const state = useSelector((state: any) => state.user);
-    debugger
-  
+  const dispatch = useDispatch();
+  const categories = useSelector((state: any) => state.user.categories); // Use Redux state directly
+
   const fetchServices = async () => {
     setLoading(true);
     try {
@@ -42,9 +40,7 @@ export default function CategoriesList() {
       if (partnerId) {
         const result = await getCategories(partnerId, searchTerm);
         if (result.data.data) {
-          // setCategories(result.data.data);
-          dispatch(setCategoryList(result.data.data))
-
+          dispatch(setCategoryList(result.data.data)); // Update Redux store
         }
       }
     } catch (error) {
@@ -57,17 +53,15 @@ export default function CategoriesList() {
   };
 
   const handleAddCatgegory = () => {
-    navigate(
-      route.addserviceRedirect + `?token=${token}&partnerId=${partnerId}`
-    );
+    navigate(route.addserviceRedirect + `?token=${token}&partnerId=${partnerId}`);
   };
 
   const titleCase = (str: any) => {
     return str
       .toLowerCase()
-      .split(' ')
+      .split(" ")
       .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .join(" ");
   };
 
   const handleBackRoute = () => {
@@ -102,7 +96,7 @@ export default function CategoriesList() {
       }
       setShowDeleteModal(false);
     }
-};
+  };
 
   const handleCloseModal = () => {
     setSelectedCategory(null);
@@ -120,28 +114,20 @@ export default function CategoriesList() {
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(socketURL, {
-        transports: ['websocket'],
+        transports: ["websocket"],
       });
 
-      socketRef.current.on('connect', () => {
-        console.log('Connected to WebSocket:', socketRef.current.id);
+      socketRef.current.on("connect", () => {
+        console.log("Connected to WebSocket:", socketRef.current.id);
       });
 
       socketRef.current.on("service", (data: any) => {
-        console.log(data,'data')
-        console.log(partnerId)
-        let clonedCategories = [...state.categories]
-       clonedCategories.forEach((e)=>{
-        if(e._id === data.serviceId){
-          e.status = data.category.status
-        }
-       })
-
-       console.log(clonedCategories,'clonedCategories')
-       dispatch(setCategoryList(clonedCategories))
-        // if (data.partnerId === partnerId) {
-        //   fetchServices();
-        // }
+      
+         if(partnerId === data.partnerId._id){
+          fetchServices();
+         }
+     
+      
       });
     }
 
@@ -151,7 +137,7 @@ export default function CategoriesList() {
         socketRef.current = null;
       }
     };
-  }, [partnerId]);
+  }, [categories, partnerId, dispatch]);
 
   return (
     <div style={{ padding: "20px" }}>
@@ -211,7 +197,7 @@ export default function CategoriesList() {
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) : state?.categories.length === 0 ? (
+        ) : categories.length === 0 ? (
           <h3
             style={{
               display: "flex",
@@ -225,7 +211,7 @@ export default function CategoriesList() {
             No services found.
           </h3>
         ) : (
-          state?.categories.map((cat: any) => (
+          categories.map((cat: any) => (
             <Card
               key={cat._id}
               style={{
@@ -264,8 +250,8 @@ export default function CategoriesList() {
                   {!cat.isActiveByAdmin
                     ? "Admin Approval Pending"
                     : cat.status === "Active"
-                      ? "Active"
-                      : "Inactive"}
+                    ? "Active"
+                    : "Inactive"}
                 </span>
               </div>
               <div onClick={(e) => e.stopPropagation()}>
@@ -312,4 +298,4 @@ export default function CategoriesList() {
       />
     </div>
   );
-}  
+}
