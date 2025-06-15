@@ -10,6 +10,8 @@ import { AxiosError } from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { all_routes } from "../router/all_routes";
 import { io } from 'socket.io-client';
+import { useDispatch, useSelector } from "react-redux";
+import { setCategoryList } from "../../core/data/redux/user/userSlice";
 
 export default function CategoriesList() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -26,7 +28,10 @@ export default function CategoriesList() {
   const route = all_routes;
   const socketURL = process.env.REACT_APP_SOCKET_URL || 'https://api.peakup25.com';
   const socketRef = useRef<any>(null);
-
+  const dispatch:any = useDispatch();
+    const state = useSelector((state: any) => state.user);
+    debugger
+  
   const fetchServices = async () => {
     setLoading(true);
     try {
@@ -37,7 +42,9 @@ export default function CategoriesList() {
       if (partnerId) {
         const result = await getCategories(partnerId, searchTerm);
         if (result.data.data) {
-          setCategories(result.data.data);
+          // setCategories(result.data.data);
+          dispatch(setCategoryList(result.data.data))
+
         }
       }
     } catch (error) {
@@ -123,7 +130,7 @@ export default function CategoriesList() {
       socketRef.current.on("service", (data: any) => {
         console.log(data,'data')
         console.log(partnerId)
-        let clonedCategories = [...categories]
+        let clonedCategories = [...state.categories]
        clonedCategories.forEach((e)=>{
         if(e._id === data.serviceId){
           e.status = data.category.status
@@ -131,7 +138,7 @@ export default function CategoriesList() {
        })
 
        console.log(clonedCategories,'clonedCategories')
-       setCategories(clonedCategories)
+       dispatch(setCategoryList(clonedCategories))
         // if (data.partnerId === partnerId) {
         //   fetchServices();
         // }
@@ -204,7 +211,7 @@ export default function CategoriesList() {
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) : categories.length === 0 ? (
+        ) : state?.categories.length === 0 ? (
           <h3
             style={{
               display: "flex",
@@ -218,7 +225,7 @@ export default function CategoriesList() {
             No services found.
           </h3>
         ) : (
-          categories.map((cat: any) => (
+          state?.categories.map((cat: any) => (
             <Card
               key={cat._id}
               style={{
