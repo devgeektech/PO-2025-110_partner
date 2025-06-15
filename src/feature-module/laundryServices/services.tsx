@@ -123,10 +123,18 @@ export default function CategoriesList() {
       socketRef.current.on("service", (data: any) => {
         console.log(data,'data')
         console.log(partnerId)
-        console.log(data.partnerId,'dsad')
-        if (data.partnerId === partnerId) {
-          fetchServices();
+        let clonedCategories = [...categories]
+       clonedCategories.forEach((e)=>{
+        if(e._id === data.serviceId){
+          e.status = data.category.status
         }
+       })
+
+       console.log(clonedCategories,'clonedCategories')
+       setCategories(clonedCategories)
+        // if (data.partnerId === partnerId) {
+        //   fetchServices();
+        // }
       });
     }
 
