@@ -121,6 +121,9 @@ export default function CategoriesList() {
       });
 
       socketRef.current.on("service", (data: any) => {
+        console.log('dasdasd')
+        console.log(partnerId)
+        console.log(data.partnerId,'dsad')
         if (data.partnerId === partnerId) {
           fetchServices();
         }
