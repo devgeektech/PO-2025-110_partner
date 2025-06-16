@@ -161,15 +161,20 @@ export default function CategoriesList() {
           Services
         </h4>
 
-        <div>
+        <div className="my-3">
+          <div className="container">
+          <div className="row">
+          <div className="col-lg-3"></div>
+          <div className="col-lg-6 col-sm-12">
           <FaSearch
             onClick={() => setShowSearchInput(!showSearchInput)}
             style={{
               fontSize: "18px",
               cursor: "pointer",
               position: "absolute",
-              top: "0px",
-              right: "0px",
+              top: "3rem",
+              right: "12px",
+              zIndex: "999"
             }}
           />
           {showSearchInput && (
@@ -187,10 +192,14 @@ export default function CategoriesList() {
               }}
             />
           )}
+          </div>
+          <div className="col-lg-3"></div>
+          </div>
+          </div>
         </div>
       </div>
 
-      <div>
+      <div className="mt-3">
         {loading ? (
           <div style={{ textAlign: "center", padding: "20px" }}>
             <div className="spinner-border text-primary" role="status">
