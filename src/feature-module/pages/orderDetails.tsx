@@ -134,15 +134,15 @@ const OrderDetails = () => {
               <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status} disabled={status === "Completed"} >
                 <option>Select menu</option>
                 <option value="Order placed" disabled={
-                    !["Order placed"].includes(status) 
+                    true 
                   }
                   >Order placed</option>
                 {/* <option value="On the way">On the way</option> */}
                 <option value="In process" disabled={
-                    !["On the way","Order placed"].includes(status) 
+                    !["On the way"].includes(status) && status === "Order placed" 
                   } >In process</option>
                 <option disabled={
-                    !["On the way","Order placed","In process"].includes(status) 
+                    !["On the way","In process"].includes(status) && status === "Order placed"
                   } value="Laundry is cleaned">Laundry is cleaned</option>
                 {/* <option value="Completed">Completed</option> */}
               </Form.Select>
