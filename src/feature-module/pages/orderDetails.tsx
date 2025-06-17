@@ -139,10 +139,10 @@ const OrderDetails = () => {
                   >Order placed</option>
                 {/* <option value="On the way">On the way</option> */}
                 <option value="In process" disabled={
-                    !["On the way"].includes(status) && status === "Order placed" 
+                    !["On the way"].includes(status) || status === "Order placed" 
                   } >In process</option>
                 <option disabled={
-                    !["On the way","In process"].includes(status) && status === "Order placed"
+                    !["On the way","In process"].includes(status) || status === "Order placed"
                   } value="Laundry is cleaned">Laundry is cleaned</option>
                 {/* <option value="Completed">Completed</option> */}
               </Form.Select>
