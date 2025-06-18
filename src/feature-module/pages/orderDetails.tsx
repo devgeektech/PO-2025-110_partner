@@ -130,33 +130,22 @@ const OrderDetails = () => {
               <h5 className="card-title mb-2">{order?.title}</h5>
 
             </div>
-            <div className="delivery-download-button delivery-download-button-2">
+            {status !== "Completed" && (<div className="delivery-download-button delivery-download-button-2">
               <Form.Select aria-label="Default select example" className='download-button' onChange={handleStatusChange} value={status} disabled={status === "Completed"} >
                 <option>Select menu</option>
                 <option value="Order placed" disabled={
                     true 
                   }
                   >Order placed</option>
-                {/* <option value="On the way">On the way</option> */}
                 <option value="In process" disabled={
                     !["On the way"].includes(status) || status === "Order placed" 
                   } >In process</option>
                 <option disabled={
                     !["On the way","In process"].includes(status) || status === "Order placed"
                   } value="Laundry is cleaned">Laundry is cleaned</option>
-                {/* <option value="Completed">Completed</option> */}
               </Form.Select>
-              {/* <span className="Order-id-98"> Order ID: {order.orderId}</span> */}
-            </div>
-            {/* <div className="delivery-download-button delivery-download-button-2">
-                 <span className="download-button bg-primary"> {order.status} <MdOutlineKeyboardArrowDown /></span>
-                 
-              </div> */}
+            </div>)}
           </div>
-
-          {/* <div className="order-no-110">
-            <p className="card-text">Order no:{order.orderId}</p>
-          </div> */}
 
           <div className="order-no-110">
             <p className="card-text">Instructions:<span style={{fontSize: "0.875rem", fontWeight: "300", marginLeft: "5px"}}>{order?.instructions}</span></p>
