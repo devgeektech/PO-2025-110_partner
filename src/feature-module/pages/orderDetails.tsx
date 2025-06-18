@@ -207,7 +207,7 @@ const OrderDetails = () => {
               <p className="card-text fw-bold">Customer Details:</p>
             </div>
 
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="-1">
               {order?.customerAddresses?.map((address: any, index: number) => (
                 <Accordion.Item
                   eventKey={index.toString()}
@@ -273,7 +273,7 @@ const OrderDetails = () => {
               ))}
             </Accordion>
 
-            <Accordion defaultActiveKey="0" style={{ marginTop: "5px" }}>
+            <Accordion defaultActiveKey="-1" style={{ marginTop: "5px" }}>
               <Accordion.Item eventKey="delivery">
                 <Accordion.Header>Delivery Address</Accordion.Header>
 
@@ -310,7 +310,7 @@ const OrderDetails = () => {
                     {/* <p className="mb-1"><strong>Name:</strong> {address.name ? address.name.charAt(0).toUpperCase() + address.name.slice(1) : `Address ${index + 1}`}</p> */}
                     <p className="mb-1">
                       <strong>Street:</strong>{" "}
-                      {order?.deliveryAddress?.street}
+                      {order?.deliveryAddress?.street || "N/A"}
                     </p>
                     <p className="mb-1">
                       <strong>City:</strong> {order?.deliveryAddress?.city || "N/A"}
