@@ -74,6 +74,16 @@ button.history-button {
     font-size: 16px;
     
 }
+.accordion-button:not(.collapsed) {
+    background-color: rgba(17, 22, 47, 0.6980392157) !important;
+    color: #fff !important;
+    box-shadow: none;
+  }
+  
+  // Optional: remove the default blue focus ring
+  .accordion-button:focus {
+    box-shadow: none;
+  }
 .order-mob .card-header span.text-muted.small {
     color: #fff !important;
     font-family: "Roboto", sans-serif;
