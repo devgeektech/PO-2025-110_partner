@@ -240,7 +240,7 @@ const OrderDetails = () => {
                     }}
                   >
                     <h6 className="fw-bold mb-2">Address Details</h6>
-                    <p className="mb-1"><strong>Name:</strong> {address.name ? address.name.charAt(0).toUpperCase() + address.name.slice(1) : `Address ${index + 1}`}</p>
+                    {/* <p className="mb-1"><strong>Name:</strong> {address.name ? address.name.charAt(0).toUpperCase() + address.name.slice(1) : `Address ${index + 1}`}</p> */}
                     <p className="mb-1"><strong>Street:</strong> {address?.street}</p>
                     <p className="mb-1"><strong>City:</strong> {address?.city}</p>
                     <p className="mb-1"><strong>State:</strong> {address?.state}</p>
