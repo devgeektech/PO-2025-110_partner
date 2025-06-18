@@ -146,6 +146,40 @@ p.card-text-3 span.text-muted.small{
     position: relative;
     z-index: 99999;
 }
+.delivery-download-button span.delivery-button {
+    padding: 11px 12px;
+    border-radius: 4px;
+    background-color: #CCD5DB !important;
+    color: #000;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500 !important;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    z-index: 99999;
+}
+.customer-details-button {
+    padding: 10px 16px;
+    border-radius: 6px;
+    background-color: #CCD5DB !important;
+    color: #000;
+    font-family: "Roboto", sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  
+    &:hover {
+      background-color: #c1cbd1 !important;
+      text-decoration: underline;
+    }
+  }
 .card-body.mobile-p-0 {
     padding-left: 0px;
     padding-right: 0px;
