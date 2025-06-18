@@ -203,56 +203,138 @@ const OrderDetails = () => {
             )}
           </div>
           <div className="full-address-accordion mt-3">
-          <div className="order-no-110">
-            <p className="card-text fw-bold">Customer Details:</p>
-          </div>
+            <div className="order-no-110">
+              <p className="card-text fw-bold">Customer Details:</p>
+            </div>
 
-          <Accordion defaultActiveKey="0">
-            {order?.customerAddresses?.map((address: any, index: number) => (
-              <Accordion.Item eventKey={index.toString()} key={address._id || index}>
-                <Accordion.Header>
-                  Pickup Address
-                </Accordion.Header>
+            <Accordion defaultActiveKey="0">
+              {order?.customerAddresses?.map((address: any, index: number) => (
+                <Accordion.Item
+                  eventKey={index.toString()}
+                  key={address._id || index}
+                >
+                  <Accordion.Header>Pickup Address</Accordion.Header>
+
+                  <Accordion.Body style={{ padding: 0 }}>
+                    {/* Customer Info Section */}
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        padding: "12px 15px",
+                        background: "#fff",
+                      }}
+                    >
+                      <h6 className="fw-bold mb-2">Customer Info</h6>
+                      <p className="mb-1">
+                        <strong>Email:</strong>{" "}
+                        {order?.customer?.email || "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Phone:</strong>{" "}
+                        {order?.customer?.phone || "N/A"}
+                      </p>
+                    </div>
+
+                    {/* Address Details Section */}
+                    <div
+                      style={{
+                        border: "1px solid #ccc",
+                        borderRadius: "8px",
+                        padding: "12px 15px",
+                        background: "#fff",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <h6 className="fw-bold mb-2">Address Details</h6>
+                      {/* <p className="mb-1"><strong>Name:</strong> {address.name ? address.name.charAt(0).toUpperCase() + address.name.slice(1) : `Address ${index + 1}`}</p> */}
+                      <p className="mb-1">
+                        <strong>Street:</strong> {address?.street || "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>City:</strong> {address?.city|| "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>State:</strong> {address?.state || "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Country:</strong> {address?.country || "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Zip Code:</strong> {address?.zipCode || "N/A"}
+                      </p>
+                      <p className="mb-1">
+                        <strong>Type:</strong>{" "}
+                        {capitalize(address?.addressType) || "N/A"}
+                      </p>
+                    </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+              ))}
+            </Accordion>
+
+            <Accordion defaultActiveKey="0" style={{ marginTop: "5px" }}>
+              <Accordion.Item eventKey="delivery">
+                <Accordion.Header>Delivery Address</Accordion.Header>
 
                 <Accordion.Body style={{ padding: 0 }}>
                   {/* Customer Info Section */}
                   <div
                     style={{
-                      border: '1px solid #ccc',
-                      borderRadius: '8px',
-                      padding: '12px 15px',
-                      background: '#fff',
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "12px 15px",
+                      background: "#fff",
                     }}
                   >
                     <h6 className="fw-bold mb-2">Customer Info</h6>
-                    <p className="mb-1"><strong>Email:</strong> {order?.customer?.email || "N/A"}</p>
-                    <p className="mb-1"><strong>Phone:</strong> {order?.customer?.phone || "N/A"}</p>
+                    <p className="mb-1">
+                      <strong>Email:</strong> {order?.customer?.email || "N/A"}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Phone:</strong> {order?.customer?.phone || "N/A"}
+                    </p>
                   </div>
 
                   {/* Address Details Section */}
                   <div
                     style={{
-                      border: '1px solid #ccc',
-                      borderRadius: '8px',
-                      padding: '12px 15px',
-                      background: '#fff',
-                      marginTop: '10px',
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "12px 15px",
+                      background: "#fff",
+                      marginTop: "10px",
                     }}
                   >
                     <h6 className="fw-bold mb-2">Address Details</h6>
                     {/* <p className="mb-1"><strong>Name:</strong> {address.name ? address.name.charAt(0).toUpperCase() + address.name.slice(1) : `Address ${index + 1}`}</p> */}
-                    <p className="mb-1"><strong>Street:</strong> {address?.street}</p>
-                    <p className="mb-1"><strong>City:</strong> {address?.city}</p>
-                    <p className="mb-1"><strong>State:</strong> {address?.state}</p>
-                    <p className="mb-1"><strong>Country:</strong> {address?.country}</p>
-                    <p className="mb-1"><strong>Zip Code:</strong> {address?.zipCode}</p>
-                    <p className="mb-1"><strong>Type:</strong> {capitalize(address?.addressType)}</p>
+                    <p className="mb-1">
+                      <strong>Street:</strong>{" "}
+                      {order?.deliveryAddress?.street}
+                    </p>
+                    <p className="mb-1">
+                      <strong>City:</strong> {order?.deliveryAddress?.city || "N/A"}
+                    </p>
+                    <p className="mb-1">
+                      <strong>State:</strong> {order?.deliveryAddress?.state || "N/A"}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Country:</strong>{" "}
+                      {order?.deliveryAddress?.country || "N/A"}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Zip Code:</strong>{" "}
+                      {order?.deliveryAddress?.zipCode || "N/A"}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Type:</strong>{" "}
+                      {capitalize(order?.deliveryAddress?.addressType)|| "N/A"}
+                    </p>
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
-            ))}
-          </Accordion>
-        </div>
+            </Accordion>
+          </div>
           {/* <Modal show={showAddressModal} onHide={handleCloseModal} centered>
             <Modal.Header closeButton>
               <Modal.Title>Customer Address</Modal.Title>
