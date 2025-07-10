@@ -226,6 +226,13 @@ p.card-text-3 span.text-muted.small{
     padding: 8px;
 }
 
+.content{
+    .boxes {
+        z-index: 1;
+        position: relative;
+    }
+}
+
 @media (max-width: 767.98px) {
     .card.order-mob {
         padding: 0px;

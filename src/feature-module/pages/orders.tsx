@@ -272,7 +272,8 @@ const Orders = () => {
             </h3>
           </div>
         ) : (
-          <div className="row">
+          <div className="boxes">
+            <div className="row">
             {orders.map((order: any, index: any) => (
               <div className="col-lg-4 col-md-6" key={index}>
                 <div className="card mb-3 shadow-sm border-0 order-mob">
@@ -326,6 +327,7 @@ const Orders = () => {
                 </div>
               </div>
             ))}
+          </div>
           </div>
         )}
       </div>
