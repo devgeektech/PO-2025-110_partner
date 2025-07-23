@@ -177,9 +177,9 @@ const OrderDetails = () => {
                   disabled={status === "Completed"}
                 >
                   <option>Select menu</option>
-                  <option value="Order placed" disabled={true}>
+                  {/* <option value="Order placed" disabled={true}>
                     Order placed
-                  </option>
+                  </option> */}
                   <option
                     value="In process"
                     disabled={
