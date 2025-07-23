@@ -44,6 +44,7 @@ export default function AddServicesTabContent() {
 
   const initialValues = {
     serviceName: categoryDetail?.name || "",
+    subTitle: categoryDetail?.subTitle || "",
     description: categoryDetail?.description || "",
     photo: categoryDetail?.photo || "",
     icon: categoryDetail?.icon || "",
@@ -53,6 +54,7 @@ export default function AddServicesTabContent() {
 
   const addServiceSchema = Yup.object().shape({
     serviceName: Yup.string().required("Service name is required"),
+    subTitle: Yup.string().max(100, "Subtitle cannot exceed 100 characters"),
     description: Yup.string()
       .min(10, "Description must be at least 10 characters")
       .max(300, "Description cannot exceed 300 characters"),
@@ -183,6 +185,22 @@ export default function AddServicesTabContent() {
               <div className="text-danger mt-1">
                 {formik.errors.serviceName}
               </div>
+            )}
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Subtitle</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Add Subtitle (Optional)"
+              {...formik.getFieldProps("subTitle")}
+              className={clsx("commonInput", {
+                "border border-danger":
+                  formik.touched.subTitle && formik.errors.subTitle,
+              })}
+            />
+            {formik.touched.subTitle && formik.errors.subTitle && (
+              <div className="text-danger mt-1">{formik.errors.subTitle}</div>
             )}
           </Form.Group>
 
