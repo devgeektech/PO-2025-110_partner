@@ -29,7 +29,7 @@ export default function CategoriesList() {
   const socketRef = useRef<any>(null);
   const dispatch = useDispatch();
   const categories = useSelector((state: any) => state.user.categories); // Use Redux state directly
-
+  
   const fetchServices = async () => {
     setLoading(true);
     try {
@@ -122,12 +122,12 @@ export default function CategoriesList() {
       });
 
       socketRef.current.on("service", (data: any) => {
-      
+
          if(partnerId === data.partnerId._id){
           fetchServices();
-         }
-     
-      
+        }
+
+
       });
     }
 
@@ -163,38 +163,38 @@ export default function CategoriesList() {
 
         <div className="my-3">
           <div className="container">
-          <div className="row">
-          <div className="col-lg-3"></div>
-          <div className="col-lg-6 col-sm-12">
-          <FaSearch
-            onClick={() => setShowSearchInput(!showSearchInput)}
-            style={{
-              fontSize: "18px",
-              cursor: "pointer",
-              position: "absolute",
-              top: "3rem",
-              right: "12px",
-              zIndex: "999"
-            }}
-          />
-          {showSearchInput && (
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => handleSearch(e.target.value)}
-              style={{
-                position: "absolute",
-                right: "0px",
-                bottom: "5px",
-                transition: "1s all ease-in-out",
-              }}
-            />
-          )}
-          </div>
-          <div className="col-lg-3"></div>
-          </div>
+            <div className="row">
+              <div className="col-lg-3"></div>
+              <div className="col-lg-6 col-sm-12">
+                <FaSearch
+                  onClick={() => setShowSearchInput(!showSearchInput)}
+                  style={{
+                    fontSize: "18px",
+                    cursor: "pointer",
+                    position: "absolute",
+                    top: "3rem",
+                    right: "12px",
+                    zIndex: "999"
+                  }}
+                />
+                {showSearchInput && (
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search..."
+                    value={searchTerm}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    style={{
+                      position: "absolute",
+                      right: "0px",
+                      bottom: "5px",
+                      transition: "1s all ease-in-out",
+                    }}
+                  />
+                )}
+              </div>
+              <div className="col-lg-3"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -250,6 +250,9 @@ export default function CategoriesList() {
               />
               <div style={{ flexGrow: 1 }}>
                 <h6 style={{ marginBottom: "4px", fontWeight: "bold" }}>{titleCase(cat.name)}</h6>
+                <h6 style={{ margin: 0, fontSize: "12px", color: "#6c757d" }}>
+                  {cat.subTitle ? cat.subTitle : ""}
+                </h6>
                 <p style={{ margin: 0, fontSize: "13px", color: "#6c757d" }}>
                   {cat.description}
                 </p>
@@ -259,8 +262,8 @@ export default function CategoriesList() {
                   {!cat.isActiveByAdmin
                     ? "Admin Approval Pending"
                     : cat.status === "Active"
-                    ? "Active"
-                    : "Inactive"}
+                      ? "Active"
+                      : "Inactive"}
                 </span>
               </div>
               <div onClick={(e) => e.stopPropagation()}>
