@@ -305,7 +305,7 @@ const Orders = () => {
                         {order?.customerAddresses?.county}
                       </p>
                       <p className="card-text card-text-3 fw-bold mb-2">
-                        {order.amount.toFixed(2)}{" "}
+                        {order.amount?.toFixed(2)}{" "}
                         <span className="text-muted small">
                           (Paid with {order.paymentType})
                         </span>

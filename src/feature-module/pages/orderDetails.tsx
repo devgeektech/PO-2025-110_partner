@@ -148,21 +148,21 @@ const OrderDetails = () => {
               {order?.customerAddresses?.county}
             </p>
             <p className="card-text card-text-3 fw-bold mb-2">
-              ₱{(order?.amount ?? 0) - (order?.transportation ?? 0)}{" "}
+              ₱{((order?.amount?.toFixed(2)) ?? 0) - ((order?.transportation?.toFixed(2)) ?? 0)}{" "}
               <span className="text-muted small">
                 (Paid with {order?.paymentType || "N/A"})
               </span>
             </p>
-            {order?.transportation != null && (
+            {/* {order?.transportation != null && (
               <p className="card-text text-muted small mb-1">
                 Transportation Fee: ₱{order.transportation}
               </p>
-            )}
+            )} */}
             {status === "Completed" && (
               <div className="delivery-download-button">
                 <span className="delivery-button-2 badge bg-primary">
                   <img src="/assets/img/delivery-icon-white.png" alt="" />{" "}
-                  {order?.status}
+                  {order?.status} 
                 </span>
               </div>
             )}
