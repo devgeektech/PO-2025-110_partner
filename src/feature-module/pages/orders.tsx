@@ -112,7 +112,7 @@ const Orders = () => {
             </div>
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Amount Paid :</h5>
-              <p className="card-text text-muted small mb-1">{order?.amount}</p>
+              <p className="card-text text-muted small mb-1">₱{((order?.amount?.toFixed(2)) ?? 0) - ((order?.transportation?.toFixed(2)) ?? 0)}</p>
             </div>
             <div className="card-body-invoice-inner">
               <h5 className="card-title mb-2">Date & Time :</h5>
@@ -305,7 +305,7 @@ const Orders = () => {
                         {order?.customerAddresses?.county}
                       </p>
                       <p className="card-text card-text-3 fw-bold mb-2">
-                        {order.amount?.toFixed(2)}{" "}
+                      ₱{(((order?.amount) ?? 0) - ((order?.transportation) ?? 0))?.toFixed(2)}{" "}
                         <span className="text-muted small">
                           (Paid with {order.paymentType})
                         </span>
