@@ -5,6 +5,7 @@ export const all_routes = {
   error404: "/pages/error-404",
   faq: "/pages/faq",
   orders: "/pages/orders",
+  paymentGateway: "/pages/paymentGateway/:id",
   orderDetails: "/pages/order/:id",
   invoice: "/pages/invoice",
   addService: "/pages/addService",

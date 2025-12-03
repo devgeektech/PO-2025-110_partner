@@ -12,6 +12,7 @@ import CategoriesList from "../laundryServices/services";
 import OrderDetails from "../pages/orderDetails";
 import Invoice from "../pages/invoice";
 import BackPage from "../common/backPage";
+import MayaPayment from "../pages/mayaPayment";
 const routes = all_routes;
 
 const publicRoutes = [
@@ -68,6 +69,11 @@ const publicRoutes = [
   {
     path: routes.invioceDownloadRedirect,
     element: <BackPage />,
+    route: Route
+  },
+   {
+    path: routes.paymentGateway,
+    element:  <MayaPayment />,
     route: Route
   },
 ];

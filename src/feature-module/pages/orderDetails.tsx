@@ -81,8 +81,8 @@ const OrderDetails = () => {
 
         let serviceDetails = data.services.length
           ? data.services
-              .map((service: any) => service?.serviceDetails?.name)
-              .join(", ")
+            .map((service: any) => service?.serviceDetails?.name)
+            .join(", ")
           : "";
 
         data.serviceDetails = serviceDetails;
@@ -102,11 +102,22 @@ const OrderDetails = () => {
     navigate(route.orders + `?token=${token}&partnerId=${partnerId}`);
   };
 
+  const handlePayNow = async () => {
+    try {
+      console.log('id==>', route.paymentGateway);
+      let orderId = id;
+      const cleaned = route.paymentGateway.replace("/:id", "");
+      navigate(`${cleaned}/${id}?token=${token}&partnerId=${orderId}`);
+    } catch (error) {
+      toast.error("Unable to initialize payment");
+    }
+  };
+
   useEffect(() => {
     fetchOrderDetails();
   }, []);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   return (
     <div className="content">
@@ -162,8 +173,16 @@ const OrderDetails = () => {
               <div className="delivery-download-button">
                 <span className="delivery-button-2 badge bg-primary">
                   <img src="/assets/img/delivery-icon-white.png" alt="" />{" "}
-                  {order?.status} 
+                  {order?.status}
                 </span>
+                 {order?.paymentType !== "paid" && (
+                <button
+                  className="btn btn-success"
+                  onClick={() => handlePayNow()}
+                >
+                  Pay Now
+                </button>
+                )} 
               </div>
             )}
 
@@ -252,7 +271,7 @@ const OrderDetails = () => {
                         <strong>Street:</strong> {address?.street || "N/A"}
                       </p>
                       <p className="mb-1">
-                        <strong>City:</strong> {address?.city|| "N/A"}
+                        <strong>City:</strong> {address?.city || "N/A"}
                       </p>
                       <p className="mb-1">
                         <strong>State:</strong> {address?.state || "N/A"}
@@ -328,7 +347,7 @@ const OrderDetails = () => {
                     </p>
                     <p className="mb-1">
                       <strong>Type:</strong>{" "}
-                      {capitalize(order?.deliveryAddress?.addressType)|| "N/A"}
+                      {capitalize(order?.deliveryAddress?.addressType) || "N/A"}
                     </p>
                   </div>
                 </Accordion.Body>
