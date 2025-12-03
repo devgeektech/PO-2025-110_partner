@@ -55,7 +55,7 @@ const MayaPayment = () => {
       const res = await createPaymentReq({
         orderId: id,
         amount: order.amount,
-        customer: {
+        customer: {  
           email: order.customer?.email,
           phone: order.customer?.phone,
         },
