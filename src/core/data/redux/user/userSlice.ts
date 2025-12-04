@@ -18,7 +18,6 @@ export const userReducer = createSlice({
       state.userDetail= action.payload;
     },
     setCategoryList:(state, action)=>{
-      debugger
       state.categories= action.payload;
     },
     setLocations: (state, action)=>{
