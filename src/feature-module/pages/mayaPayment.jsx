@@ -60,13 +60,12 @@ const MayaPayment = () => {
           phone: order.customer?.phone,
         },
         description: 'Testing'
-      });
-
-      // if (res.data?.checkoutUrl) {
-      //   window.location.href = res.data.checkoutUrl; // redirect to Maya WebView
-      // } else {
-      //   toast.error("Unable to start payment.");
-      // }
+      }); 
+      if (res.data?.data.paymentUrl) {
+        window.location.href = res.data.data.paymentUrl; // redirect to Maya WebView
+      } else {
+        toast.error("Unable to start payment.");
+      }
     } catch (err) {
       toast.error("Payment error. Check API keys.");
     }
